@@ -326,19 +326,17 @@
         exploreCatalog: 'کتب خانہ دیکھیں',
         collectionStat: 'کل ذخیرہ کتب',
         booksUnit: 'کتب',
-        statusStat: 'حیثیت',
-        openNow: 'ابھی کھلا ہے',
+        statusStat: 'اوقاتِ کار',
+        openNow: 'عصر تا مغرب',
         locationStat: 'مقام',
         mauLabel: 'مئو ناتھ بھنجن',
         addressTitle: 'پتہ و محل وقوع',
         addressFull: 'ڈومن پورہ {حبہ}، مئو ناتھ بھنجن، ضلع مئو، اتر پردیش، انڈیا - 275101',
         timingsTitle: 'لائبریری کے اوقات',
-        monThu: 'پیر تا جمعرات',
-        monThuTime: 'صبح 8:00 تا دوپہر 1:00 | شام 3:30 تا 8:30',
-        friday: 'جمعہ',
-        fridayTime: 'شام 3:30 تا رات 9:00 (بعد نماز جمعہ)',
-        satSun: 'ہفتہ و اتوار',
-        satSunTime: 'صبح 8:30 تا شام 8:30',
+        monSat: 'پیر تا ہفتہ',
+        monSatTime: 'بعد نمازِ عصر تا مغرب',
+        sunday: 'اتوار',
+        sundayTime: 'بند (ہفتہ وار تعطیل)',
         aboutTitle: 'ام القریٰ لائبریری کا تعارف',
         aboutBody: 'ام القریٰ لائبریری، ڈومن پورہ {حبہ}، مئو ناتھ بھنجن، ایک دینی، علمی اور ادبی مرکز ہے جس کا قیام اسلامی ورثے کے تحفظ اور طلبہ، علماء اور شائقین کتب کے لیے مستند کتابیں فراہم کرنے کے لیے کیا گیا ہے۔ یہاں تفسیر قرآن، احادیث نبویہ، فقہ، سیرت طیبہ، تاریخ اور اردو ادب کا گراں قدر ذخیرہ موجود ہے۔',
         guidelinesPreviewTitle: 'چند ضروری ہدایات',
@@ -396,19 +394,17 @@
         exploreCatalog: 'Explore Catalogue',
         collectionStat: 'Collection',
         booksUnit: 'Books',
-        statusStat: 'Status',
-        openNow: 'Open Now',
+        statusStat: 'Library Hours',
+        openNow: 'Asr – Maghrib',
         locationStat: 'Location',
         mauLabel: 'Maunath Bhanjan',
         addressTitle: 'Address & Location',
         addressFull: 'Domanpura {Hibba}, Maunath Bhanjan, Dist. Mau, Uttar Pradesh, India - 275101',
         timingsTitle: 'Library Timings',
-        monThu: 'Mon - Thu',
-        monThuTime: '8:00 AM - 1:00 PM | 3:30 PM - 8:30 PM',
-        friday: 'Friday',
-        fridayTime: "3:30 PM - 9:00 PM (After Jumu'ah)",
-        satSun: 'Sat - Sun',
-        satSunTime: '8:30 AM - 8:30 PM',
+        monSat: 'Monday – Saturday',
+        monSatTime: 'After Asr to Maghrib Prayer',
+        sunday: 'Sunday',
+        sundayTime: 'Closed',
         aboutTitle: 'About Ummul Qura Library',
         aboutBody: 'Ummul Qura Library, located at Domanpura {Hibba}, Maunath Bhanjan, is a religious, academic, and literary center dedicated to preserving Islamic heritage and providing authentic books for students, scholars, and readers. Our collection spans Quranic Tafseer, Hadith, Fiqh, Seerat, History, and classic Urdu Literature.',
         guidelinesPreviewTitle: 'Library Guidelines',
@@ -533,6 +529,7 @@
 
       const [activeTab, setActiveTab] = useState('home');
       const [selectedGalleryIdx, setSelectedGalleryIdx] = useState(0);
+      const [showGalleryLightbox, setShowGalleryLightbox] = useState(false);
       const [searchQuery, setSearchQuery] = useState('');
       const [selectedCategory, setSelectedCategory] = useState('All');
       const [selectedSection, setSelectedSection] = useState('All');
@@ -906,16 +903,12 @@
                     </div>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between gap-2 border-b border-slate-100 pb-1.5">
-                        <span className="font-semibold text-slate-700">{t('monThu')}</span>
-                        <span className="text-library-800 font-medium">{t('monThuTime')}</span>
-                      </div>
-                      <div className="flex justify-between gap-2 border-b border-slate-100 pb-1.5">
-                        <span className="font-semibold text-slate-700">{t('friday')}</span>
-                        <span className="text-library-800 font-medium">{t('fridayTime')}</span>
+                        <span className="font-semibold text-slate-700">{t('monSat')}</span>
+                        <span className="text-library-800 font-medium">{t('monSatTime')}</span>
                       </div>
                       <div className="flex justify-between gap-2">
-                        <span className="font-semibold text-slate-700">{t('satSun')}</span>
-                        <span className="text-library-800 font-medium">{t('satSunTime')}</span>
+                        <span className="font-semibold text-slate-700">{t('sunday')}</span>
+                        <span className="text-red-700 font-medium">{t('sundayTime')}</span>
                       </div>
                     </div>
                   </div>
@@ -962,12 +955,18 @@
                     </h3>
                     <span className="text-xs font-semibold text-slate-500">{selectedGalleryIdx + 1} / {GALLERY_PHOTOS.length}</span>
                   </div>
-                  <div className="relative rounded-xl overflow-hidden h-64 md:h-80 bg-slate-900 mb-3">
+                  <div
+                    onClick={() => setShowGalleryLightbox(true)}
+                    className="relative rounded-xl overflow-hidden h-72 md:h-96 bg-library-950 mb-3 cursor-zoom-in group"
+                  >
                     <img
                       src={GALLERY_PHOTOS[selectedGalleryIdx].src}
                       alt={isUrdu ? GALLERY_PHOTOS[selectedGalleryIdx].titleUrdu : GALLERY_PHOTOS[selectedGalleryIdx].titleEnglish}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain transition duration-200 group-hover:scale-[1.02]"
                     />
+                    <span className="absolute top-3 end-3 w-9 h-9 rounded-full bg-black/55 text-white flex items-center justify-center text-sm shadow">
+                      <i className="fas fa-magnifying-glass-plus"></i>
+                    </span>
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-4 text-white">
                       <h4 className="font-bold text-base md:text-lg">{isUrdu ? GALLERY_PHOTOS[selectedGalleryIdx].titleUrdu : GALLERY_PHOTOS[selectedGalleryIdx].titleEnglish}</h4>
                       <p className="text-xs md:text-sm text-white/90">{isUrdu ? GALLERY_PHOTOS[selectedGalleryIdx].descriptionUrdu : GALLERY_PHOTOS[selectedGalleryIdx].descriptionEnglish}</p>
@@ -1554,6 +1553,46 @@
               onClose={() => setShowImportModal(false)}
               onSave={handleBulkImportSave}
             />
+          )}
+
+          {showGalleryLightbox && (
+            <div
+              onClick={() => setShowGalleryLightbox(false)}
+              className="fixed inset-0 z-50 bg-black/95 flex flex-col justify-between p-4 md:p-6"
+            >
+              <div className="flex items-center justify-between text-white" onClick={e => e.stopPropagation()}>
+                <span className="text-sm font-bold">{selectedGalleryIdx + 1} / {GALLERY_PHOTOS.length}</span>
+                <button
+                  onClick={() => setShowGalleryLightbox(false)}
+                  className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center"
+                >
+                  <i className="fas fa-xmark text-lg"></i>
+                </button>
+              </div>
+              <div className="relative flex-1 flex items-center justify-center my-3 min-h-0" onClick={e => e.stopPropagation()}>
+                <button
+                  onClick={() => setSelectedGalleryIdx(i => (i - 1 + GALLERY_PHOTOS.length) % GALLERY_PHOTOS.length)}
+                  className="absolute start-2 md:start-4 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center"
+                >
+                  <i className={`fas ${isUrdu ? 'fa-chevron-right' : 'fa-chevron-left'}`}></i>
+                </button>
+                <img
+                  src={GALLERY_PHOTOS[selectedGalleryIdx].src}
+                  alt={isUrdu ? GALLERY_PHOTOS[selectedGalleryIdx].titleUrdu : GALLERY_PHOTOS[selectedGalleryIdx].titleEnglish}
+                  className="max-h-full max-w-full object-contain rounded-lg"
+                />
+                <button
+                  onClick={() => setSelectedGalleryIdx(i => (i + 1) % GALLERY_PHOTOS.length)}
+                  className="absolute end-2 md:end-4 z-10 w-10 h-10 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center"
+                >
+                  <i className={`fas ${isUrdu ? 'fa-chevron-left' : 'fa-chevron-right'}`}></i>
+                </button>
+              </div>
+              <div className="bg-black/65 text-white rounded-xl p-3 max-w-3xl mx-auto w-full" onClick={e => e.stopPropagation()}>
+                <h4 className="font-bold text-base">{isUrdu ? GALLERY_PHOTOS[selectedGalleryIdx].titleUrdu : GALLERY_PHOTOS[selectedGalleryIdx].titleEnglish}</h4>
+                <p className="text-xs md:text-sm text-white/85">{isUrdu ? GALLERY_PHOTOS[selectedGalleryIdx].descriptionUrdu : GALLERY_PHOTOS[selectedGalleryIdx].descriptionEnglish}</p>
+              </div>
+            </div>
           )}
 
           {confirmDeleteBook && (

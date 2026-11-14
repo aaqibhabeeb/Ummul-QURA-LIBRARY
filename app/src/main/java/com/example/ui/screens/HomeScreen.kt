@@ -31,14 +31,19 @@ import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Verified
+import androidx.compose.material.icons.filled.ZoomIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -60,6 +65,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.R
 import com.example.data.BookEntity
@@ -142,6 +149,7 @@ fun HomeScreen(
     )
 
     var selectedPhotoIndex by remember { mutableStateOf(0) }
+    var showGalleryLightbox by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = modifier
@@ -287,8 +295,8 @@ fun HomeScreen(
                     modifier = Modifier.weight(1f)
                 )
                 StatPill(
-                    title = if (isUrdu) "حیثیت" else "Status",
-                    subtitle = if (isUrdu) "ابھی کھلا ہے" else "Open Now",
+                    title = if (isUrdu) "اوقاتِ کار" else "Library Hours",
+                    subtitle = if (isUrdu) "عصر تا مغرب" else "Asr – Maghrib",
                     icon = Icons.Default.AccessTime,
                     highlight = true,
                     modifier = Modifier.weight(1f)
@@ -439,16 +447,12 @@ fun HomeScreen(
                     Spacer(modifier = Modifier.height(14.dp))
 
                     TimingRow(
-                        days = if (isUrdu) "پیر تا جمعرات" else "Mon - Thu",
-                        time = if (isUrdu) "صبح 8:00 تا دوپہر 1:00 | شام 3:30 تا 8:30" else "8:00 AM - 1:00 PM | 3:30 PM - 8:30 PM"
+                        days = if (isUrdu) "پیر تا ہفتہ" else "Monday – Saturday",
+                        time = if (isUrdu) "بعد نمازِ عصر تا مغرب" else "After Asr to Maghrib Prayer"
                     )
                     TimingRow(
-                        days = if (isUrdu) "جمعہ" else "Friday",
-                        time = if (isUrdu) "شام 3:30 تا رات 9:00 (بعد نماز جمعہ)" else "3:30 PM - 9:00 PM (After Jumu'ah)"
-                    )
-                    TimingRow(
-                        days = if (isUrdu) "ہفتہ و اتوار" else "Sat - Sun",
-                        time = if (isUrdu) "صبح 8:30 تا شام 8:30" else "8:30 AM - 8:30 PM"
+                        days = if (isUrdu) "اتوار" else "Sunday",
+                        time = if (isUrdu) "بند (ہفتہ وار تعطیل)" else "Closed"
                     )
                 }
             }
@@ -641,8 +645,10 @@ fun HomeScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(240.dp)
+                        .clickable { showGalleryLightbox = true },
                     shape = RoundedCornerShape(14.dp),
+                    colors = CardDefaults.cardColors(containerColor = EmeraldGreenDark),
                     elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -650,8 +656,24 @@ fun HomeScreen(
                             painter = painterResource(id = activePhoto.drawableRes),
                             contentDescription = if (isUrdu) activePhoto.titleUrdu else activePhoto.titleEnglish,
                             modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Fit
                         )
+                        Surface(
+                            color = Color.Black.copy(alpha = 0.55f),
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(10.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ZoomIn,
+                                contentDescription = if (isUrdu) "بڑی تصویر دیکھیں" else "View Full Photo",
+                                tint = Color.White,
+                                modifier = Modifier
+                                    .padding(6.dp)
+                                    .size(18.dp)
+                            )
+                        }
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -659,7 +681,8 @@ fun HomeScreen(
                                     Brush.verticalGradient(
                                         colors = listOf(
                                             Color.Transparent,
-                                            Color.Black.copy(alpha = 0.75f)
+                                            Color.Transparent,
+                                            Color.Black.copy(alpha = 0.80f)
                                         )
                                     )
                                 ),
@@ -675,6 +698,106 @@ fun HomeScreen(
                                 )
                                 Text(
                                     text = if (isUrdu) activePhoto.descriptionUrdu else activePhoto.descriptionEnglish,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White.copy(alpha = 0.9f)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                if (showGalleryLightbox) {
+                    Dialog(
+                        onDismissRequest = { showGalleryLightbox = false },
+                        properties = DialogProperties(usePlatformDefaultWidth = false)
+                    ) {
+                        val photo = galleryPhotos[selectedPhotoIndex]
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(Color.Black.copy(alpha = 0.95f))
+                                .padding(16.dp)
+                        ) {
+                            Image(
+                                painter = painterResource(id = photo.drawableRes),
+                                contentDescription = if (isUrdu) photo.titleUrdu else photo.titleEnglish,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(vertical = 56.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.TopCenter),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "${selectedPhotoIndex + 1} / ${galleryPhotos.size}",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                IconButton(onClick = { showGalleryLightbox = false }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Close,
+                                        contentDescription = if (isUrdu) "بند کریں" else "Close",
+                                        tint = Color.White
+                                    )
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.Center),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Surface(
+                                    color = Color.Black.copy(alpha = 0.6f),
+                                    shape = CircleShape
+                                ) {
+                                    IconButton(onClick = {
+                                        selectedPhotoIndex = (selectedPhotoIndex - 1 + galleryPhotos.size) % galleryPhotos.size
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                            contentDescription = if (isUrdu) "پچھلی تصویر" else "Previous Photo",
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
+                                Surface(
+                                    color = Color.Black.copy(alpha = 0.6f),
+                                    shape = CircleShape
+                                ) {
+                                    IconButton(onClick = {
+                                        selectedPhotoIndex = (selectedPhotoIndex + 1) % galleryPhotos.size
+                                    }) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                            contentDescription = if (isUrdu) "اگلی تصویر" else "Next Photo",
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomStart)
+                                    .background(Color.Black.copy(alpha = 0.65f), RoundedCornerShape(12.dp))
+                                    .padding(12.dp)
+                            ) {
+                                Text(
+                                    text = if (isUrdu) photo.titleUrdu else photo.titleEnglish,
+                                    fontFamily = if (isUrdu) NotoNastaliqUrduFamily else MaterialTheme.typography.titleMedium.fontFamily,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White
+                                )
+                                Text(
+                                    text = if (isUrdu) photo.descriptionUrdu else photo.descriptionEnglish,
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.White.copy(alpha = 0.9f)
                                 )
