@@ -1,76 +1,43 @@
+HTML
+
+
 <!DOCTYPE html>
 <html lang="ur" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>اُمّ القریٰ لائبریری | Ummul Qura Library | مكتبة أم القرى</title>
+  <title>اُمّ القریٰ لائبریری | Ummul Qura Library</title>
   
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome 6 Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- Google Fonts: Amiri, Tajawal, Noto Nastaliq Urdu, Inter -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-  
-  <!-- React 18 & ReactDOM -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
-  <!-- Babel Compiler -->
+  <!-- React & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- SheetJS / XLSX for Excel & CSV Parsing with UTF-8 support -->
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- SheetJS (xlsx) CDN for CSV/Excel parsing and exporting -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Tajawal', 'Inter', 'system-ui', 'Tahoma', 'sans-serif'],
-            serif: ['Amiri', 'serif'],
-            urdu: ['Noto Nastaliq Urdu', 'Tajawal', 'serif']
-          },
-          colors: {
-            library: {
-              950: '#0f291e',
-              900: '#1b4332',
-              800: '#2d6a4f',
-              700: '#40916c',
-              600: '#52b788',
-              100: '#d8f3dc',
-              50: '#f0fdf4'
-            },
-            gold: {
-              500: '#d4af37',
-              400: '#e5c158',
-              300: '#f3d982',
-              100: '#fef9e7'
-            }
-          }
-        }
-      }
-    }
-  </script>
-
+  
+  <!-- Urdu Nastaliq & Arabic Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    body {
-      font-family: 'Tajawal', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f8fafc;
-      color: #1e293b;
-      transition: direction 0.25s ease, background-color 0.25s ease;
+    .font-urdu {
+      font-family: 'Noto Nastaliq Urdu', 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+      line-height: 2.2;
     }
-    .font-arabic-title {
-      font-family: 'Amiri', 'Noto Nastaliq Urdu', 'Tajawal', serif;
+    .font-arabic {
+      font-family: 'Noto Naskh Arabic', 'Traditional Arabic', serif;
+    }
+    .font-en {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
     }
     ::-webkit-scrollbar-track {
       background: #f1f5f9;
@@ -79,1742 +46,975 @@
       background: #cbd5e1;
       border-radius: 4px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
   </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-50 selection:bg-gold-500 selection:text-library-950">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
+    const { useState, useEffect, useMemo, useRef } = React;
 
-    // 50 Pre-populated Classical Islamic Library Books (UQL-1001 to UQL-1050)
     const INITIAL_50_BOOKS = [
-      { id: 'b1', catalogue_number: 'UQL-1001', title: 'صحيح البخاري', author: 'الإمام محمد بن إسماعيل البخاري', serial_number: 'SN-2024-001', alphabetical_section: 'أ', category: 'حدیث شریف', source_page: 'ص ١', total_copies: 8, available_copies: 6 },
-      { id: 'b2', catalogue_number: 'UQL-1002', title: 'صحيح مسلم', author: 'الإمام مسلم بن الحجاج القشيري النيسابوري', serial_number: 'SN-2024-002', alphabetical_section: 'ص', category: 'حدیث شریف', source_page: 'ص ١', total_copies: 6, available_copies: 4 },
-      { id: 'b3', catalogue_number: 'UQL-1003', title: 'تفسير القرآن العظيم (تفسير ابن كثير)', author: 'الإمام الحافظ ابن كثير الدمشقي', serial_number: 'SN-2024-003', alphabetical_section: 'ت', category: 'تفسیر قرآن', source_page: 'ص ٤٥', total_copies: 10, available_copies: 7 },
-      { id: 'b4', catalogue_number: 'UQL-1004', title: 'فتح الباري شرح صحيح البخاري', author: 'الحافظ ابن حجر العسقلاني', serial_number: 'SN-2024-004', alphabetical_section: 'ف', category: 'حدیث و شروحات', source_page: 'ص ١١٢', total_copies: 5, available_copies: 3 },
-      { id: 'b5', catalogue_number: 'UQL-1005', title: 'رياض الصالحين من كلام سيد المرسلين', author: 'الإمام يحيى بن شرف النووي', serial_number: 'SN-2024-005', alphabetical_section: 'ر', category: 'حدیث و اخلاق', source_page: 'ص ٨٨', total_copies: 12, available_copies: 9 },
-      { id: 'b6', catalogue_number: 'UQL-1006', title: 'زاد المعاد في هدي خير العباد', author: 'الإمام ابن قيم الجوزية', serial_number: 'SN-2024-006', alphabetical_section: 'ز', category: 'سیرت و فقه', source_page: 'ص ٢٠٥', total_copies: 4, available_copies: 2 },
-      { id: 'b7', catalogue_number: 'UQL-1007', title: 'موطأ الإمام مالك', author: 'الإمام مالك بن أنس الأصبحي', serial_number: 'SN-2024-007', alphabetical_section: 'م', category: 'حدیث شریف', source_page: 'ص ٣٤', total_copies: 7, available_copies: 5 },
-      { id: 'b8', catalogue_number: 'UQL-1008', title: 'البداية والنهاية', author: 'الحافظ ابن كثير الدمشقي', serial_number: 'SN-2024-008', alphabetical_section: 'ا', category: 'تاریخ اسلام', source_page: 'ص ٥٠٠', total_copies: 6, available_copies: 3 },
-      { id: 'b9', catalogue_number: 'UQL-1009', title: 'جامع الترمذي (سنن الترمذي)', author: 'الإمام محمد بن عيسى الترمذي', serial_number: 'SN-2024-009', alphabetical_section: 'ج', category: 'حدیث شریف', source_page: 'ص ٧٢', total_copies: 8, available_copies: 6 },
-      { id: 'b10', catalogue_number: 'UQL-1010', title: 'سنن أبي داود', author: 'الإمام أبو داود السجستاني', serial_number: 'SN-2024-010', alphabetical_section: 'س', category: 'حدیث شریف', source_page: 'ص ٩٠', total_copies: 6, available_copies: 4 },
-      { id: 'b11', catalogue_number: 'UQL-1011', title: 'سنن النسائي (المجتبى)', author: 'الإمام أحمد بن شعيب النسائي', serial_number: 'SN-2024-011', alphabetical_section: 'س', category: 'حدیث شریف', source_page: 'ص ١٥', total_copies: 5, available_copies: 3 },
-      { id: 'b12', catalogue_number: 'UQL-1012', title: 'سنن ابن ماجه', author: 'الإمام محمد بن ماجه القزويني', serial_number: 'SN-2024-012', alphabetical_section: 'س', category: 'حدیث شریف', source_page: 'ص ٣٠', total_copies: 6, available_copies: 5 },
-      { id: 'b13', catalogue_number: 'UQL-1013', title: 'سير أعلام النبلاء', author: 'الإمام شمس الدين الذهبي', serial_number: 'SN-2024-013', alphabetical_section: 'س', category: 'تراجم و رجال', source_page: 'ص ٤٠٠', total_copies: 4, available_copies: 2 },
-      { id: 'b14', catalogue_number: 'UQL-1014', title: 'العقيدة الطحاوية', author: 'الإمام أبو جعفر الطحاوي الحنفي', serial_number: 'SN-2024-014', alphabetical_section: 'ع', category: 'علم العقیدہ', source_page: 'ص ١٢', total_copies: 15, available_copies: 11 },
-      { id: 'b15', catalogue_number: 'UQL-1015', title: 'كتاب التوحيد الذي هو حق الله على العبيد', author: 'الشيخ محمد بن عبد الوهاب', serial_number: 'SN-2024-015', alphabetical_section: 'ك', category: 'علم العقیدہ', source_page: 'ص ٥', total_copies: 10, available_copies: 8 },
-      { id: 'b16', catalogue_number: 'UQL-1016', title: 'الرحيق المختوم', author: 'الشيخ صفي الرحمن المباركفوري', serial_number: 'SN-2024-016', alphabetical_section: 'ا', category: 'سیرت طیبہ', source_page: 'ص ١٨٠', total_copies: 9, available_copies: 6 },
-      { id: 'b17', catalogue_number: 'UQL-1017', title: 'الأربعون النووية', author: 'الإمام محيي الدين النووي', serial_number: 'SN-2024-017', alphabetical_section: 'ا', category: 'حدیث شریف', source_page: 'ص ٢', total_copies: 20, available_copies: 16 },
-      { id: 'b18', catalogue_number: 'UQL-1018', title: 'مدارج السالكين بين منازل إياك نعبد وإياك نستعين', author: 'الإمام ابن قيم الجوزية', serial_number: 'SN-2024-018', alphabetical_section: 'م', category: 'تزکیه و احسان', source_page: 'ص ٣١٠', total_copies: 4, available_copies: 2 },
-      { id: 'b19', catalogue_number: 'UQL-1019', title: 'إحياء علوم الدين', author: 'الإمام أبو حامد الغزالي', serial_number: 'SN-2024-019', alphabetical_section: 'ا', category: 'اخلاق و تزکیه', source_page: 'ص ٢٢٠', total_copies: 5, available_copies: 3 },
-      { id: 'b20', catalogue_number: 'UQL-1020', title: 'المغني في فقه الإمام أحمد بن حنبل', author: 'موفق الدين ابن قدامة المقدسي', serial_number: 'SN-2024-020', alphabetical_section: 'ا', category: 'فقه مقارن', source_page: 'ص ٦٥٠', total_copies: 3, available_copies: 1 },
-      { id: 'b21', catalogue_number: 'UQL-1021', title: 'تفسير الجلالين', author: 'جلال الدين المحلي وجلال الدين السيوطي', serial_number: 'SN-2024-021', alphabetical_section: 'ت', category: 'تفسیر قرآن', source_page: 'ص ٩٥', total_copies: 11, available_copies: 8 },
-      { id: 'b22', catalogue_number: 'UQL-1022', title: 'تيسير الكريم الرحمن في تفسير كلام المنان', author: 'الشيخ عبد الرحمن بن ناصر السعدي', serial_number: 'SN-2024-022', alphabetical_section: 'ت', category: 'تفسیر قرآن', source_page: 'ص ١٤٠', total_copies: 8, available_copies: 5 },
-      { id: 'b23', catalogue_number: 'UQL-1023', title: 'سیرت سرور عالم (اردو)', author: 'مولانا سید ابوالاعلی مودودی', serial_number: 'SN-2024-023', alphabetical_section: 'س', category: 'سیرت اردو', source_page: 'ص ٢٥٠', total_copies: 7, available_copies: 4 },
-      { id: 'b24', catalogue_number: 'UQL-1024', title: 'بہشتی زیور (اردو)', author: 'مولانا مجدد الملت اشرف علی تھانوی', serial_number: 'SN-2024-024', alphabetical_section: 'ب', category: 'فقہ حنفی اردو', source_page: 'ص ١١٥', total_copies: 10, available_copies: 7 },
-      { id: 'b25', catalogue_number: 'UQL-1025', title: 'معارف القرآن (اردو)', author: 'مفتی اعظم محمد شفیع عثمانی', serial_number: 'SN-2024-025', alphabetical_section: 'م', category: 'تفسیر اردو', source_page: 'ص ٣٨٠', total_copies: 6, available_copies: 3 },
-      { id: 'b26', catalogue_number: 'UQL-1026', title: 'مجموع فتاوى شيخ الإسلام ابن تيمية', author: 'شيخ الإسلام تقي الدين ابن تيمية', serial_number: 'SN-2024-026', alphabetical_section: 'م', category: 'فتاوى و عقيدة', source_page: 'ص ٧٨٠', total_copies: 4, available_copies: 2 },
-      { id: 'b27', catalogue_number: 'UQL-1027', title: 'المحلى بالآثار', author: 'الإمام علي بن أحمد بن حزم الأندلسي', serial_number: 'SN-2024-027', alphabetical_section: 'ا', category: 'فقه ظاهر', source_page: 'ص ٤٢٠', total_copies: 3, available_copies: 1 },
-      { id: 'b28', catalogue_number: 'UQL-1028', title: 'الرسالة في أصول الفقه', author: 'الإمام محمد بن إدريس الشافعي', serial_number: 'SN-2024-028', alphabetical_section: 'ا', category: 'أصول الفقه', source_page: 'ص ٥٥', total_copies: 6, available_copies: 4 },
-      { id: 'b29', catalogue_number: 'UQL-1029', title: 'لسان العرب', author: 'العلامة ابن منظور الأفريقي', serial_number: 'SN-2024-029', alphabetical_section: 'ل', category: 'لغت و ادب', source_page: 'ص ٩٠٠', total_copies: 4, available_copies: 2 },
-      { id: 'b30', catalogue_number: 'UQL-1030', title: 'رد المحتار على الدر المختار (فتاوی شامی)', author: 'العلامة ابن عابدين الشامي', serial_number: 'SN-2024-030', alphabetical_section: 'ر', category: 'فقہ حنفی', source_page: 'ص ٦٠٠', total_copies: 5, available_copies: 3 },
-      { id: 'b31', catalogue_number: 'UQL-1031', title: 'مقدمة ابن خلدون', author: 'العلامة عبد الرحمن بن خلدون', serial_number: 'SN-2024-031', alphabetical_section: 'م', category: 'تاریخ و عمران', source_page: 'ص ٣٣٠', total_copies: 8, available_copies: 5 },
-      { id: 'b32', catalogue_number: 'UQL-1032', title: 'جامع العلوم والحكم', author: 'الحافظ زين الدين ابن رجب الحنبلي', serial_number: 'SN-2024-032', alphabetical_section: 'ج', category: 'حديث و شروحات', source_page: 'ص ١٧٥', total_copies: 6, available_copies: 4 },
-      { id: 'b33', catalogue_number: 'UQL-1033', title: 'صفة صلاة النبي صلى الله عليه وسلم', author: 'الشيخ محمد ناصر الدين الألباني', serial_number: 'SN-2024-033', alphabetical_section: 'ص', category: 'فقه و حديث', source_page: 'ص ٤٨', total_copies: 12, available_copies: 9 },
-      { id: 'b34', catalogue_number: 'UQL-1034', title: 'فقه السنة', author: 'الشيخ السيد سابق', serial_number: 'SN-2024-034', alphabetical_section: 'ف', category: 'فقه ميسر', source_page: 'ص ٢٩٠', total_copies: 7, available_copies: 5 },
-      { id: 'b35', catalogue_number: 'UQL-1035', title: 'نيل الأوطار من أسرار منتقى الأخبار', author: 'الإمام محمد بن علي الشوكاني', serial_number: 'SN-2024-035', alphabetical_section: 'ن', category: 'أحاديث الأحكام', source_page: 'ص ٥١٠', total_copies: 4, available_copies: 2 },
-      { id: 'b36', catalogue_number: 'UQL-1036', title: 'المنهاج شرح صحيح مسلم بن الحجاج', author: 'الإمام يحيى بن شرف النووي', serial_number: 'SN-2024-036', alphabetical_section: 'ا', category: 'حديث و شروحات', source_page: 'ص ٣٤٠', total_copies: 5, available_copies: 3 },
-      { id: 'b37', catalogue_number: 'UQL-1037', title: 'کشف المحجوب (اردو)', author: 'حضرت علی بن عثمان ہجویری (داتا گنج بخش)', serial_number: 'SN-2024-037', alphabetical_section: 'ک', category: 'تصوف و سلوک', source_page: 'ص ١٨٠', total_copies: 6, available_copies: 4 },
-      { id: 'b38', catalogue_number: 'UQL-1038', title: 'تفہیم القرآن (اردو)', author: 'مولانا سید ابوالاعلی مودودی', serial_number: 'SN-2024-038', alphabetical_section: 'ت', category: 'تفسیر اردو', source_page: 'ص ٧٥٠', total_copies: 9, available_copies: 6 },
-      { id: 'b39', catalogue_number: 'UQL-1039', title: 'شرح السنة', author: 'الإمام الحسين بن مسعود البغوي', serial_number: 'SN-2024-039', alphabetical_section: 'ش', category: 'حديث و فقه', source_page: 'ص ٢١٠', total_copies: 4, available_copies: 2 },
-      { id: 'b40', catalogue_number: 'UQL-1040', title: 'الأشباه والنظائر في قواعد الفقه', author: 'الجلال عبد الرحمن السيوطي', serial_number: 'SN-2024-040', alphabetical_section: 'ا', category: 'قواعد فقهية', source_page: 'ص ١٦٠', total_copies: 5, available_copies: 3 },
-      { id: 'b41', catalogue_number: 'UQL-1041', title: 'قواعد الأحكام في مصالح الأنام', author: 'العز بن عبد السلام السلمي', serial_number: 'SN-2024-041', alphabetical_section: 'ق', category: 'قواعد و أصول', source_page: 'ص ١٩٥', total_copies: 4, available_copies: 2 },
-      { id: 'b42', catalogue_number: 'UQL-1042', title: 'فتاوى عالمگیری (الفتوى الهندية - اردو)', author: 'جماعة من علماء الهند بإشراف أورنكزيب عالمکير', serial_number: 'SN-2024-042', alphabetical_section: 'ف', category: 'فقہ حنفی', source_page: 'ص ٨٥٠', total_copies: 7, available_copies: 4 },
-      { id: 'b43', catalogue_number: 'UQL-1043', title: 'قصص الأنبياء', author: 'الحافظ ابن كثير الدمشقي', serial_number: 'SN-2024-043', alphabetical_section: 'ق', category: 'قصص و تاريخ', source_page: 'ص ٢٧٠', total_copies: 11, available_copies: 8 },
-      { id: 'b44', catalogue_number: 'UQL-1044', title: 'الشفاء بتعريف حقوق المصطفى', author: 'القاضي أبو الفضل عياض اليحصبي', serial_number: 'SN-2024-044', alphabetical_section: 'ا', category: 'شمائل و سيرت', source_page: 'ص ٣٥٠', total_copies: 8, available_copies: 5 },
-      { id: 'b45', catalogue_number: 'UQL-1045', title: 'أدب الدنيا والدين', author: 'الإمام أبو الحسن علي بن محمد الماوردي', serial_number: 'SN-2024-045', alphabetical_section: 'ا', category: 'أخلاق و آداب', source_page: 'ص ٢٤٠', total_copies: 6, available_copies: 4 },
-      { id: 'b46', catalogue_number: 'UQL-1046', title: 'إعلام الموقعين عن رب العالمين', author: 'الإمام شمس الدين ابن قيم الجوزية', serial_number: 'SN-2024-046', alphabetical_section: 'ا', category: 'أصول و فتاوى', source_page: 'ص ٥٦٠', total_copies: 4, available_copies: 2 },
-      { id: 'b47', catalogue_number: 'UQL-1047', title: 'فتح المجيد شرح كتاب التوحيد', author: 'الشيخ عبد الرحمن بن حسن آل الشيخ', serial_number: 'SN-2024-047', alphabetical_section: 'ف', category: 'توحيد و عقيدة', source_page: 'ص ٢١٥', total_copies: 7, available_copies: 5 },
-      { id: 'b48', catalogue_number: 'UQL-1048', title: 'تاریخ طبری (تاريخ الأمم والملوك)', author: 'الإمام محمد بن جرير الطبري', serial_number: 'SN-2024-048', alphabetical_section: 'ت', category: 'تاریخ اسلام', source_page: 'ص ٩٢٠', total_copies: 5, available_copies: 3 },
-      { id: 'b49', catalogue_number: 'UQL-1049', title: 'جامع البيان عن تأويل أي القرآن (تفسير الطبري)', author: 'الإمام محمد بن جرير الطبري', serial_number: 'SN-2024-049', alphabetical_section: 'ت', category: 'تفسير مأثور', source_page: 'ص ٩٥٠', total_copies: 6, available_copies: 3 },
-      { id: 'b50', catalogue_number: 'UQL-1050', title: 'سیرت النبی صلى اللہ علیہ وسلم (اردو)', author: 'علامہ شبلی نعمانی و سید سلیمان ندوی', serial_number: 'SN-2024-050', alphabetical_section: 'س', category: 'سیرت اردو', source_page: 'ص ٦٢٠', total_copies: 9, available_copies: 6 }
+      { id: '1', title: 'صحيح البخاري', author: 'الإمام محمد بن إسماعيل البخاري', serial_number: 'SN-1001', catalogue_number: 'UQL-1001', alphabetical_section: 'ح', source_page: '1-500', category: 'الحديث الشريف' },
+      { id: '2', title: 'صحيح مسلم', author: 'الإمام مسلم بن الحجاج النيسابوري', serial_number: 'SN-1002', catalogue_number: 'UQL-1002', alphabetical_section: 'ح', source_page: '1-450', category: 'الحديث الشريف' },
+      { id: '3', title: 'سنن أبي داود', author: 'الإمام أبو داود السجستاني', serial_number: 'SN-1003', catalogue_number: 'UQL-1003', alphabetical_section: 'ح', source_page: '1-380', category: 'الحديث الشريف' },
+      { id: '4', title: 'جامع الترمذي', author: 'الإمام محمد بن عيسى الترمذي', serial_number: 'SN-1004', catalogue_number: 'UQL-1004', alphabetical_section: 'ح', source_page: '1-410', category: 'الحديث الشريف' },
+      { id: '5', title: 'سنن النسائي', author: 'الإمام أحمد بن شعيب النسائي', serial_number: 'SN-1005', catalogue_number: 'UQL-1005', alphabetical_section: 'ح', source_page: '1-390', category: 'الحديث الشريف' },
+      { id: '6', title: 'سنن ابن ماجه', author: 'الإمام محمد بن ماجه القزويني', serial_number: 'SN-1006', catalogue_number: 'UQL-1006', alphabetical_section: 'ح', source_page: '1-350', category: 'الحديث الشريف' },
+      { id: '7', title: 'موطأ الإمام مالك', author: 'الإمام مالك بن أنس', serial_number: 'SN-1007', catalogue_number: 'UQL-1007', alphabetical_section: 'ح', source_page: '1-300', category: 'الفقه والحديث' },
+      { id: '8', title: 'مسند الإمام أحمد بن حنبل', author: 'الإمام أحمد بن حنبل', serial_number: 'SN-1008', catalogue_number: 'UQL-1008', alphabetical_section: 'ح', source_page: '1-600', category: 'الحديث الشريف' },
+      { id: '9', title: 'تفسير القرآن العظيم (تفسير ابن كثير)', author: 'الحافظ ابن كثير', serial_number: 'SN-1009', catalogue_number: 'UQL-1009', alphabetical_section: 'ت', source_page: '1-800', category: 'تفسير القرآن' },
+      { id: '10', title: 'جامع البيان عن تأويل آي القرآن (تفسير الطبري)', author: 'الإمام محمد بن جرير الطبري', serial_number: 'SN-1010', catalogue_number: 'UQL-1010', alphabetical_section: 'ت', source_page: '1-950', category: 'تفسير القرآن' },
+      { id: '11', title: 'الجامع لأحكام القرآن (تفسير القرطبي)', author: 'الإمام محمد بن أحمد القرطبي', serial_number: 'SN-1011', catalogue_number: 'UQL-1011', alphabetical_section: 'ت', source_page: '1-880', category: 'تفسير القرآن' },
+      { id: '12', title: 'تفہیم القرآن', author: 'مولانا سید ابو الاعلیٰ مودودی', serial_number: 'SN-1012', catalogue_number: 'UQL-1012', alphabetical_section: 'ت', source_page: 'جلد 1-6', category: 'تفسير القرآن' },
+      { id: '13', title: 'معارف القرآن', author: 'مفتی محمد شفیع عثمانی', serial_number: 'SN-1013', catalogue_number: 'UQL-1013', alphabetical_section: 'ت', source_page: 'جلد 1-8', category: 'تفسير القرآن' },
+      { id: '14', title: 'تدبر القرآن', author: 'مولانا امین احسن اصلاحی', serial_number: 'SN-1014', catalogue_number: 'UQL-1014', alphabetical_section: 'ت', source_page: 'جلد 1-9', category: 'تفسير القرآن' },
+      { id: '15', title: 'فتح الباري شرح صحيح البخاري', author: 'الحافظ ابن حجر العسقلاني', serial_number: 'SN-1015', catalogue_number: 'UQL-1015', alphabetical_section: 'ش', source_page: '1-750', category: 'شروح الحديث' },
+      { id: '16', title: 'المنهاج شرح صحيح مسلم بن الحجاج', author: 'الإمام يحيى بن شرف النووي', serial_number: 'SN-1016', catalogue_number: 'UQL-1016', alphabetical_section: 'ش', source_page: '1-620', category: 'شروح الحديث' },
+      { id: '17', title: 'رياض الصالحين', author: 'الإمام يحيى بن شرف النووي', serial_number: 'SN-1017', catalogue_number: 'UQL-1017', alphabetical_section: 'ر', source_page: '1-280', category: 'الأخلاق والرقائق' },
+      { id: '18', title: 'الأربعون النووية', author: 'الإمام يحيى بن شرف النووي', serial_number: 'SN-1018', catalogue_number: 'UQL-1018', alphabetical_section: 'أ', source_page: '1-45', category: 'الحديث الشريف' },
+      { id: '19', title: 'الرحيق المختوم', author: 'الشيخ صفي الرحمن المباركفوري', serial_number: 'SN-1019', catalogue_number: 'UQL-1019', alphabetical_section: 'ر', source_page: '1-320', category: 'السيرة النبوية' },
+      { id: '20', title: 'السيرة النبوية لابن هشام', author: 'عبد الملك بن هشام المعافري', serial_number: 'SN-1020', catalogue_number: 'UQL-1020', alphabetical_section: 'س', source_page: '1-510', category: 'السيرة النبوية' },
+      { id: '21', title: 'زاد المعاد في هدي خير العباد', author: 'الإمام ابن قيم الجوزية', serial_number: 'SN-1021', catalogue_number: 'UQL-1021', alphabetical_section: 'ز', source_page: '1-490', category: 'السيرة والفقه' },
+      { id: '22', title: 'الفقه الإسلامي وأدلته', author: 'الدكتور وهبة الزحيلي', serial_number: 'SN-1022', catalogue_number: 'UQL-1022', alphabetical_section: 'ف', source_page: '1-900', category: 'الفقه الإسلامي' },
+      { id: '23', title: 'المغني لابن قدامة', author: 'موفق الدين ابن قدامة المقدسي', serial_number: 'SN-1023', catalogue_number: 'UQL-1023', alphabetical_section: 'م', source_page: '1-850', category: 'الفقه المقارن' },
+      { id: '24', title: 'بداية المجتهد ونهاية المقتصد', author: 'الإمام ابن رشد الحفيد', serial_number: 'SN-1024', catalogue_number: 'UQL-1024', alphabetical_section: 'ب', source_page: '1-420', category: 'الفقه المقارن' },
+      { id: '25', title: 'فتاوى دار العلوم دیوبند', author: 'مفتی عزیز الرحمن عثمانی', serial_number: 'SN-1025', catalogue_number: 'UQL-1025', alphabetical_section: 'ف', source_page: 'جلد 1-18', category: 'الفتاوى والفقه' },
+      { id: '26', title: 'آپ کے مسائل اور ان کا حل', author: 'مولانا یوسف لدھیانوی', serial_number: 'SN-1026', catalogue_number: 'UQL-1026', alphabetical_section: 'آ', source_page: 'جلد 1-10', category: 'الفتاوى والفقه' },
+      { id: '27', title: 'العقيدة الطحاوية', author: 'الإمام أبو جعفر الطحاوي', serial_number: 'SN-1027', catalogue_number: 'UQL-1027', alphabetical_section: 'ع', source_page: '1-120', category: 'العقيدة الإسلامية' },
+      { id: '28', title: 'شرح العقيدة الطحاوية', author: 'ابن أبي العز الحنفي', serial_number: 'SN-1028', catalogue_number: 'UQL-1028', alphabetical_section: 'ش', source_page: '1-380', category: 'العقيدة الإسلامية' },
+      { id: '29', title: 'كتاب التوحيد', author: 'الشيخ محمد بن عبد الوهاب', serial_number: 'SN-1029', catalogue_number: 'UQL-1029', alphabetical_section: 'ك', source_page: '1-150', category: 'العقيدة الإسلامية' },
+      { id: '30', title: 'إحياء علوم الدين', author: 'الإمام أبو حامد الغزالي', serial_number: 'SN-1030', catalogue_number: 'UQL-1030', alphabetical_section: 'إ', source_page: '1-720', category: 'التصوف والأخلاق' },
+      { id: '31', title: 'مدارج السالكين بين منازل إياك نعبد وإياك نستعين', author: 'الإمام ابن قيم الجوزية', serial_number: 'SN-1031', catalogue_number: 'UQL-1031', alphabetical_section: 'م', source_page: '1-650', category: 'الرقائق والتزكية' },
+      { id: '32', title: 'الداء والدواء (الجواب الكافي)', author: 'الإمام ابن قيم الجوزية', serial_number: 'SN-1032', catalogue_number: 'UQL-1032', alphabetical_section: 'د', source_page: '1-290', category: 'الرقائق والتزكية' },
+      { id: '33', title: 'تاريخ الأمم والملوك (تاريخ الطبري)', author: 'الإمام محمد بن جرير الطبري', serial_number: 'SN-1033', catalogue_number: 'UQL-1033', alphabetical_section: 'ت', source_page: '1-980', category: 'التاريخ الإسلامي' },
+      { id: '34', title: 'البداية والنهاية', author: 'الحافظ ابن كثير', serial_number: 'SN-1034', catalogue_number: 'UQL-1034', alphabetical_section: 'ب', source_page: '1-910', category: 'التاريخ الإسلامي' },
+      { id: '35', title: 'الكامل في التاريخ', author: 'الإمام ابن الأثير الجزري', serial_number: 'SN-1035', catalogue_number: 'UQL-1035', alphabetical_section: 'ك', source_page: '1-870', category: 'التاريخ الإسلامي' },
+      { id: '36', title: 'مقدمة ابن خلدون', author: 'عبد الرحمن بن خلدون', serial_number: 'SN-1036', catalogue_number: 'UQL-1036', alphabetical_section: 'م', source_page: '1-530', category: 'التاريخ والاجتماع' },
+      { id: '37', title: 'سير أعلام النبلاء', author: 'الإمام شمس الدين الذهبي', serial_number: 'SN-1037', catalogue_number: 'UQL-1037', alphabetical_section: 'س', source_page: '1-990', category: 'التراجم والطبقات' },
+      { id: '38', title: 'الأجرومية في قواعد علم العربية', author: 'ابن آجروم الصنهاجي', serial_number: 'SN-1038', catalogue_number: 'UQL-1038', alphabetical_section: 'أ', source_page: '1-60', category: 'اللغة العربية والنحو' },
+      { id: '39', title: 'ألفية ابن مالك', author: 'محمد بن عبد الله بن مالك الطائي', serial_number: 'SN-1039', catalogue_number: 'UQL-1039', alphabetical_section: 'أ', source_page: '1-110', category: 'اللغة العربية والنحو' },
+      { id: '40', title: 'دلائل الإعجاز', author: 'الإمام عبد القاهر الجرجاني', serial_number: 'SN-1040', catalogue_number: 'UQL-1040', alphabetical_section: 'د', source_page: '1-340', category: 'البلاغة والأدب' },
+      { id: '41', title: 'دیوان غالب', author: 'میرزا اسد اللہ خان غالب', serial_number: 'SN-1041', catalogue_number: 'UQL-1041', alphabetical_section: 'د', source_page: '1-220', category: 'الأدب والشعر' },
+      { id: '42', title: 'کلیات اقبال', author: 'علامہ محمد اقبال', serial_number: 'SN-1042', catalogue_number: 'UQL-1042', alphabetical_section: 'ک', source_page: '1-480', category: 'الأدب والشعر' },
+      { id: '43', title: 'آب کوثر', author: 'شیخ محمد اکرام', serial_number: 'SN-1043', catalogue_number: 'UQL-1043', alphabetical_section: 'آ', source_page: '1-360', category: 'التاريخ والثقافة' },
+      { id: '44', title: 'رود کوثر', author: 'شیخ محمد اکرام', serial_number: 'SN-1044', catalogue_number: 'UQL-1044', alphabetical_section: 'ر', source_page: '1-410', category: 'التاريخ والثقافة' },
+      { id: '45', title: 'موج کوثر', author: 'شیخ محمد اکرام', serial_number: 'SN-1045', catalogue_number: 'UQL-1045', alphabetical_section: 'م', source_page: '1-390', category: 'التاريخ والثقافة' },
+      { id: '46', title: 'خطبات بہاولپور', author: 'ڈاکٹر محمد حمید اللہ', serial_number: 'SN-1046', catalogue_number: 'UQL-1046', alphabetical_section: 'خ', source_page: '1-270', category: 'الفكر الإسلامي' },
+      { id: '47', title: 'مقامات حریری', author: 'أبو محمد القاسم الحريري', serial_number: 'SN-1047', catalogue_number: 'UQL-1047', alphabetical_section: 'م', source_page: '1-310', category: 'الأدب العربي' },
+      { id: '48', title: 'دیوان المتنبي', author: 'أبو الطيب المتنبي', serial_number: 'SN-1048', catalogue_number: 'UQL-1048', alphabetical_section: 'د', source_page: '1-360', category: 'الأدب والشعر' },
+      { id: '49', title: 'صفوة التفاسير', author: 'الشيخ محمد علي الصابوني', serial_number: 'SN-1049', catalogue_number: 'UQL-1049', alphabetical_section: 'ص', source_page: '1-640', category: 'تفسير القرآن' },
+      { id: '50', title: 'تيسير الكريم الرحمن في تفسير كلام المنان (تفسير السعدي)', author: 'الشيخ عبد الرحمن بن ناصر السعدي', serial_number: 'SN-1050', catalogue_number: 'UQL-1050', alphabetical_section: 'ت', source_page: '1-780', category: 'تفسير القرآن' }
     ];
 
-    // Header Mapping Table
-    const HEADER_MAP = {
-      title: ['title', 'book title', 'کتاب کا نام', 'عنوان کتاب', 'اسم الكتاب', 'عنوان', 'نام کتاب'],
-      author: ['author', 'book author', 'مصنف', 'مؤلف', 'المؤلف', 'الكاتب', 'مصنف کا نام'],
-      serial_number: ['serial number', 'serial_number', 'serial', 'سلسلہ نمبر', 'سیریل نمبر', 'الرقم التسلسلي', 'رقم تسلسلي', 'سیریل'],
-      catalogue_number: ['catalogue number', 'catalogue_number', 'catalogue', 'فہرست نمبر', 'کیٹلاگ نمبر', 'رقم الفهرس', 'فهرس', 'کیٹلاگ'],
-      alphabetical_section: ['alphabetical section', 'alphabetical_section', 'section', 'الفبائی شعبہ', 'شعبہ', 'حرف', 'القسم الأبجدي', 'بخش'],
-      source_page: ['source page', 'source_page', 'page', 'ماخذ صفحہ', 'صفحہ نمبر', 'رقم الصفحة', 'الصفحة', 'صفحہ'],
-      category: ['category', 'subject', 'تصنیف', 'موضوع', 'التصنيف', 'الموضوع', 'مضمون'],
-      total_copies: ['total copies', 'total_copies', 'copies', 'کل نسخے', 'عدد النسخ', 'نسخے'],
-      available_copies: ['available copies', 'available_copies', 'موجود نسخے', 'النسخ المتاحة']
-    };
-
-    // Dictionary with Verified Names: Urdu 'اُمّ القریٰ لائبریری', Arabic 'مكتبة أم القرى', English 'Ummul Qura Library'
-    const UI_DICTIONARY = {
+    const UI_TRANSLATIONS = {
       ur: {
+        appNameUrdu: 'اُمّ القریٰ لائبریری',
+        appNameArabic: 'مكتبة أم القرى',
+        appNameEn: 'Ummul Qura Library',
         appTitle: 'اُمّ القریٰ لائبریری',
-        appSubtitle: 'مكتبة أم القرى - اسلامی و علمی کتب و فہارس کا ڈجیٹل ذخیرہ',
-        publicCatalogTab: 'عوامی فہرست',
-        adminDashboardTab: 'ایڈمن ڈیش بورڈ',
-        adminLogout: 'خروج (Logout)',
-
-        searchTitle: 'اُمّ القریٰ لائبریری کی فہارس میں تلاش کیجیے',
-        searchSubtitle: 'جامع فہارس، احادیث مبارکہ، تفاسیر، فقہ حنفی و مقارن، سیرت طیبہ اور تالیفات میں تلاش کریں۔',
-        searchPlaceholder: 'کتاب کا نام، مصنف کا نام، فہرست نمبر (UQL-1001) یا سلسلہ نمبر سے تلاش کریں...',
-        filtersHeading: 'الفبائی شعبہ اور موضوعاتی تصفیہ (Filters):',
-        booksCountLabel: 'موجود کتب:',
-        outOfLabel: 'از کل',
-        allSections: 'تمام شعبے',
-        allCategories: 'تمام مضامین',
-        alphabeticalSectionLabel: 'الفبائی شعبہ:',
-        categoryLabel: 'موضوعاتی تصنیف:',
-        sectionPrefix: 'شعبہ:',
-        authorPrefix: 'مصنف:',
-        serialPrefix: 'سلسلہ نمبر:',
-        sourcePagePrefix: 'ماخذ صفحہ:',
-        availableCopiesLabel: 'موجود نسخے:',
-        totalCopiesLabel: 'کل نسخے:',
-        viewDetails: 'تفصیلات دیکھیں',
-        noBooksFound: 'تلاش کے مطابق کوئی کتاب نہیں مل سکی۔',
-        resetFilters: 'تمام فلٹرز ری سیٹ کریں',
-
-        metricTotalBooks: 'کل کتب فہارس',
-        metricTotalCopies: 'دستیاب نسخہ جات',
-        metricCategoriesCount: 'موضوعاتی تصنیفات',
-        metricSectionsCount: 'الفبائی شعبہ جات',
-        dbStatus: 'ڈیٹابیس حالت',
-        dbActive: 'فعال (مقاماتی ذخیرہ)',
-        
-        adminHeaderTitle: 'اُمّ القریٰ لائبریری ایڈمن کنٹرول پینل',
-        adminHeaderSubtitle: 'نئی کتب شامل کریں یا CSV / Excel (.xlsx) فائلوں سے بلک اپ لوڈنگ انجام دیں',
-        bulkImportBtn: '📚 کتب کی بلک درآمد (Excel / CSV Import)',
-        addBookBtn: 'نئی کتاب شامل کریں',
-        resetDbBtnTooltip: 'ڈیٹابیس کو اصل 50 کتب پر ری سیٹ کریں',
-        tableSearchPlaceholder: 'جدول کی صفوں میں تلاش کریں...',
-        recordsShown: 'ظاہر کردہ صفیں:',
-        colCatNo: 'فہرست نمبر',
-        colTitle: 'عنوان کتاب',
-        colAuthor: 'مصنف',
-        colSerialNo: 'سلسلہ نمبر',
-        colSection: 'الفبائی شعبہ',
-        colCategory: 'مضمون',
-        colSourcePage: 'ماخذ صفحہ',
-        colCopies: 'نسخے (موجود/کل)',
-        colActions: 'اقدامات',
-        editTooltip: 'ترمیم کریں',
-        deleteTooltip: 'حذف کریں',
-        prevPage: 'پچھلا',
-        nextPage: 'اگلا',
-        pageLabel: 'صفحہ',
-
-        loginModalTitle: 'ایڈمن دخول (Admin Login)',
-        loginModalSubtitle: 'اُمّ القریٰ لائبریری کے انتظامی کنٹرول پینل میں لاگ ان کریں',
-        passwordLabel: 'پاس ورڈ درج کریں:',
-        passwordPlaceholder: 'پاس ورڈ درج کریں (ڈیفالٹ: admin123)',
+        brandSub: 'مكتبة أم القرى | اسلامی و علمی مخطوطات و کتب کا نظام',
+        navCatalogue: 'عمومی فہرست',
+        navAdmin: 'ایڈمن ڈیش بورڈ',
+        langSwitchBtn: 'English',
+        heroTitle: 'اُمّ القریٰ لائبریری - مرکزی ڈیٹا بیس',
+        heroSubtitle: 'جامع اسلامی و علمی کتب، فتاویٰ، شروح اور تاریخ کا محفوظ آن لائن ذخیرہ',
+        statsTotal: 'کل کتب',
+        statsCategories: 'موضوعات/زمرے',
+        statsSections: 'الفبائی شعبے',
+        searchPlaceholder: 'کتاب کا نام، مصنف، فہرست نمبر یا سلسلہ نمبر تلاش کریں...',
+        filterAllSections: 'تمام الفبائی شعبے',
+        filterAllCategories: 'تمام موضوعات',
+        tableHeaderCatNo: 'رقم الفهرس / فہرست نمبر',
+        tableHeaderTitle: 'اسم الكتاب / کتاب کا نام',
+        tableHeaderAuthor: 'المؤلف / مصنف',
+        tableHeaderSerial: 'الرقم التسلسلي / سلسلہ نمبر',
+        tableHeaderSection: 'القسم الأبجدي / الفبائی شعبہ',
+        tableHeaderPage: 'صفحہ نمبر / المصدر',
+        tableHeaderCategory: 'زمرہ',
+        tableHeaderActions: 'اقدامات',
+        btnViewDetails: 'تفصیلات',
+        btnEdit: 'ترمیم',
+        btnDelete: 'حذف',
+        adminActionTitle: 'ایڈمن انتظام',
+        btnAddBook: '➕ نئی کتاب شامل کریں',
+        btnBulkImport: '📚 کتب کی بلک درآمد (Excel / CSV Import)',
+        modalAddTitle: 'نئی کتاب کی شمولیت',
+        modalEditTitle: 'کتاب کی تفصیلات میں ترمیم',
+        modalDetailTitle: 'کتاب کا مکمل ریکارڈر',
+        btnSave: 'محفوظ کریں',
+        btnCancel: 'منسوخ کریں',
+        btnClose: 'بند کریں',
+        importTitle: 'کتب کی بلک درآمد (CSV / Excel Import)',
+        importSubtitle: 'فائل کو ڈریگ کریں یا سلیکٹ کریں۔ عربی اور اردو الفاظ کی مکمل حفاظت کی جائے گی۔',
+        importDropzoneText: '📁 CSV یا Excel (.xlsx / .xls) فائل یہاں اپلوڈ کریں',
+        importDropzoneHint: 'کلک کریں یا فائل کھینچ کر لائیں',
+        btnDownloadTemplate: '📥 نمونہ کی Excel فائل ڈاؤن لوڈ کریں (Download Template)',
+        importPreviewTitle: 'فائل کا پیش نظارہ اور تصحیح',
+        importReadyRecords: 'جاهز / تیار',
+        importInvalidWarning: '⚠️ درست کریں',
+        btnExecuteImport: 'محفوظ شدہ ڈیٹا بیس میں کتب شامل کریں',
+        importSuccessSummary: '✅ کتب کی کامیابی کے ساتھ درآمد مکمل ہو گئی!',
+        importFailCount: '❌ مسترد / نامکمل کتب:',
+        importSuccessCount: 'بنام کامرانی شامل شدہ کتب:',
+        headerMapTitle: 'کتاب کا نام / Title',
+        headerMapAuthor: 'مصنف / Author',
+        headerMapSerial: 'سلسلہ نمبر / Serial',
+        headerMapCat: 'فہرست نمبر / Cat #',
+        headerMapSection: 'شعبہ / Section',
+        headerMapPage: 'صفحہ / Page',
+        loginTitle: 'اُمّ القریٰ لائبریری - ایڈمن لاگ ان',
+        loginPassLabel: 'ایڈمن پاسورڈ درج کریں:',
         loginBtn: 'لاگ ان کریں',
-        invalidPasswordMsg: 'غلط پاس ورڈ! برائے مہربانی دوبارہ کوشش کریں۔ (ڈیفالٹ: admin123)',
-
-        bulkModalTitle: '📚 کتب کی بلک درآمد (Excel / CSV Import)',
-        bulkModalSubtitle: 'CSV اور Excel (.xlsx, .xls) فائلوں سے اردو اور عربی کتب کی اپ لوڈنگ',
-        dropzoneClick: 'فائل منتخب کرنے کے لیے یہاں کلک کریں',
-        dropzoneOr: 'یا ڈریگ اور ڈراپ کریں',
-        supportedFormats: 'مدعومہ فارمیٹس: CSV, Excel (.xlsx, .xls) - اردو اور عربی حروف UTF-8 محفوظ',
-        downloadSampleBtn: '📥 نمونہ Excel فائل ڈاؤن لوڈ کریں (Download Sample)',
-        selectedFileLabel: 'منتخب فائل:',
-        importCompletedTitle: 'بلک درآمد کا عمل مکمل ہو گیا!',
-        savedCountLabel: '✅ کامیابی سے ڈیٹابیس میں محفوظ کردہ کتب:',
-        skippedCountLabel: '⚠️ مسترد شدہ / غیر درست صفوف:',
-        filterAllRows: 'تمام صفیں',
-        filterValidRows: 'درست صفیں',
-        filterErrorRows: 'تکرار و اغلاط',
-        saveValidBtn: '💾 درست کتب ڈیٹابیس میں محفوظ کریں',
-        colStatus: 'ریکارڈ حالت',
-        statusReady: 'درست',
-        errMissingTitle: '⚠️ عنوان غائب ہے',
-        errMissingCat: '⚠️ فہرست نمبر غائب ہے',
-        errDupDb: '🛑 پہلے سے ڈیٹابیس میں موجود ہے (DB Duplicate)',
-        errDupFile: '⚠️ فائل کے اندر مکرر فہرست نمبر ہے (File Duplicate)',
-        noRowsInFilter: 'اس فلٹر میں کوئی ریکارڈ موجود نہیں ہے۔',
-        bulkHelpFooter: 'جدول کے اندر خلیات (cells) میں ترمیم کر کے مکرر فہرست نمبر یا غلط معلومات کی اصلاح کر سکتے ہیں۔',
-        closeBtn: 'بند کریں',
-        
-        addTitle: 'نئی کتاب کا اندراج',
-        editTitle: 'کتاب کے معلومات کی ترمیم',
-        fieldTitle: 'عنوان کتاب / تالیف:',
-        fieldAuthor: 'مصنف کا نام:',
-        fieldCatNo: 'فہرست نمبر (Catalogue #):',
-        fieldSerialNo: 'سلسلہ نمبر (Serial #):',
-        fieldSection: 'الفبائی شعبہ:',
-        fieldSourcePage: 'ماخذ صفحہ:',
-        fieldCategory: 'موضوعی تصنیف:',
-        fieldTotalCopies: 'کل نسخے:',
-        fieldAvailableCopies: 'دستیاب نسخے:',
-        cancelBtn: 'منسوخ کریں',
-        saveBtn: 'محفوظ کریں',
-
-        confirmDeleteTitle: 'کتاب کو حذف کرنے کی تصدیق',
-        confirmDeleteMessage: 'کیا آپ واقعی اس کتاب کو لائبریری کے ڈیٹابیس سے مستقل طور پر حذف کرنا چاہتے ہیں؟',
-        confirmDeleteBtn: 'جی ہاں، حذف کریں',
-
-        bookDetailsTitle: 'تفصیلاتِ کتاب',
-        subjectLabel: 'موضوع:',
-
-        toastUpdateSuccess: 'کتاب کی تفصیلات کامیابی سے اپ ڈیٹ ہو گئیں!',
-        toastAddSuccess: 'نئی کتاب کامیابی سے لائبریری فہارس میں شامل کر دی گئی!',
-        toastDeleteSuccess: 'کتاب کو ڈیٹابیس سے حذف کر دیا گیا ہے',
-        toastResetSuccess: 'ڈیٹابیس اصل 50 کتب پر ری سیٹ کر دیا گیا ہے',
-        toastImportSuccess: 'کامیابی! بلک درآمد شدہ کتب ڈیٹابیس میں محفوظ ہو گئیں!',
-
-        footerCopyright: '© اُمّ القریٰ لائبریری (مكتبة أم القرى) - اردو اور عربی فہارس و تالیفات کا آن لائن نظام',
-        footerFeature: 'Excel / CSV بلک درآمد اور دو لسانی سہولت فعال ہے'
+        loginError: 'غلط پاسورڈ! براہ کرم دوبارہ کوشش کریں۔',
+        logoutBtn: 'لاگ آؤٹ',
+        confirmDelete: 'کیا آپ واقعی اس کتاب کو ریکارڈ سے حذف کرنا چاہتے ہیں؟',
+        dupWarningDb: 'فہرست نمبر پہلے سے ڈیٹا بیس میں موجود ہے',
+        dupWarningFile: 'فائل کے اندر یہ فہرست نمبر دوبارہ آیا ہے',
+        missingCatWarning: 'فہرست نمبر غائب ہے',
+        missingTitleWarning: 'کتاب کا نام غائب ہے',
+        footerText: '© ۲۰۲۶ اُمّ القریٰ لائبریری (مكتبة أم القرى) - جملہ حقوق محفوظ ہیں۔'
       },
       en: {
+        appNameUrdu: 'اُمّ القریٰ لائبریری',
+        appNameArabic: 'مكتبة أم القرى',
+        appNameEn: 'Ummul Qura Library',
         appTitle: 'Ummul Qura Library',
-        appSubtitle: 'مكتبة أم القرى - Digital Islamic Library & Cataloguing System',
-        publicCatalogTab: 'Public Catalogue',
-        adminDashboardTab: 'Admin Dashboard',
-        adminLogout: 'Logout',
-        
-        searchTitle: 'Search the Ummul Qura Library Catalogue',
-        searchSubtitle: 'Explore classical works in Hadith, Tafsir, Jurisprudence, Seerah, Arabic Grammar, and History.',
-        searchPlaceholder: 'Search by title, author, catalogue number (e.g. UQL-1001), or serial number...',
-        filtersHeading: 'Alphabetical Section & Category Filters:',
-        booksCountLabel: 'Available Books:',
-        outOfLabel: 'out of',
-        allSections: 'All Sections',
-        allCategories: 'All Categories',
-        alphabeticalSectionLabel: 'Alphabetical Section:',
-        categoryLabel: 'Subject Category:',
-        sectionPrefix: 'Section:',
-        authorPrefix: 'Author:',
-        serialPrefix: 'Serial No:',
-        sourcePagePrefix: 'Source Page:',
-        availableCopiesLabel: 'Available Copies:',
-        totalCopiesLabel: 'Total Copies:',
-        viewDetails: 'View Details',
-        noBooksFound: 'No books matched your search query.',
-        resetFilters: 'Reset Search & Filters',
-
-        metricTotalBooks: 'Total Catalogued Books',
-        metricTotalCopies: 'Available Copies',
-        metricCategoriesCount: 'Subject Categories',
-        metricSectionsCount: 'Alphabetical Sections',
-        dbStatus: 'Database Status',
-        dbActive: 'Active (Local Storage)',
-        
-        adminHeaderTitle: 'Ummul Qura Library Administration',
-        adminHeaderSubtitle: 'Manage book records or perform bulk imports using CSV / Excel (.xlsx) files',
-        bulkImportBtn: '📚 Bulk CSV/Excel Import',
-        addBookBtn: 'Add New Book',
-        resetDbBtnTooltip: 'Reset database to original 50 books',
-        tableSearchPlaceholder: 'Filter table records...',
-        recordsShown: 'Rows showing:',
-        colCatNo: 'Catalogue No.',
-        colTitle: 'Book Title',
-        colAuthor: 'Author',
-        colSerialNo: 'Serial No.',
-        colSection: 'Section',
-        colCategory: 'Category',
-        colSourcePage: 'Source Page',
-        colCopies: 'Copies (Avail/Total)',
-        colActions: 'Actions',
-        editTooltip: 'Edit Record',
-        deleteTooltip: 'Delete Record',
-        prevPage: 'Previous',
-        nextPage: 'Next',
-        pageLabel: 'Page',
-
-        loginModalTitle: 'Admin Authentication',
-        loginModalSubtitle: 'Access the Ummul Qura Library Admin Control Panel',
-        passwordLabel: 'Enter Password:',
-        passwordPlaceholder: 'Enter admin password (default: admin123)',
+        brandSub: 'مكتبة أم القرى | Islamic & Academic Library System',
+        navCatalogue: 'Public Catalog',
+        navAdmin: 'Admin Dashboard',
+        langSwitchBtn: 'اردو',
+        heroTitle: 'Ummul Qura Library - Central Repository',
+        heroSubtitle: 'Digital repository of classical Islamic texts, jurisprudence, Hadith, and history',
+        statsTotal: 'Total Books',
+        statsCategories: 'Categories',
+        statsSections: 'Alphabetical Sections',
+        searchPlaceholder: 'Search by book title, author, catalogue no, or serial no...',
+        filterAllSections: 'All Sections',
+        filterAllCategories: 'All Categories',
+        tableHeaderCatNo: 'Catalogue No.',
+        tableHeaderTitle: 'Book Title',
+        tableHeaderAuthor: 'Author',
+        tableHeaderSerial: 'Serial No.',
+        tableHeaderSection: 'Section',
+        tableHeaderPage: 'Source Page',
+        tableHeaderCategory: 'Category',
+        tableHeaderActions: 'Actions',
+        btnViewDetails: 'Details',
+        btnEdit: 'Edit',
+        btnDelete: 'Delete',
+        adminActionTitle: 'Admin Management',
+        btnAddBook: '➕ Add New Book',
+        btnBulkImport: '📚 Bulk CSV/Excel Import',
+        modalAddTitle: 'Add New Book Record',
+        modalEditTitle: 'Edit Book Record',
+        modalDetailTitle: 'Book Record Details',
+        btnSave: 'Save Record',
+        btnCancel: 'Cancel',
+        btnClose: 'Close',
+        importTitle: 'Bulk CSV / Excel Book Import',
+        importSubtitle: 'Upload .csv or .xlsx files with complete UTF-8 character preservation.',
+        importDropzoneText: '📁 Upload CSV or Excel (.xlsx / .xls) file here',
+        importDropzoneHint: 'Click or drag and drop file',
+        btnDownloadTemplate: '📥 Download Sample Excel Template',
+        importPreviewTitle: 'Data Preview & Inline Correction',
+        importReadyRecords: '✓ Ready',
+        importInvalidWarning: '⚠️ Needs Correction',
+        btnExecuteImport: 'Save Valid Books to Database',
+        importSuccessSummary: '✅ Import process completed successfully!',
+        importFailCount: '❌ Skipped/Invalid Rows:',
+        importSuccessCount: 'Successfully Saved Books:',
+        headerMapTitle: 'Book Title',
+        headerMapAuthor: 'Author',
+        headerMapSerial: 'Serial No.',
+        headerMapCat: 'Catalogue No.',
+        headerMapSection: 'Section',
+        headerMapPage: 'Source Page',
+        loginTitle: 'Ummul Qura Library - Admin Login',
+        loginPassLabel: 'Enter Admin Password:',
         loginBtn: 'Login',
-        invalidPasswordMsg: 'Invalid Password! Please try again. (default: admin123)',
-
-        bulkModalTitle: '📚 Bulk Book Import (CSV / Excel)',
-        bulkModalSubtitle: 'Import book records in bulk via CSV or Excel (.xlsx, .xls) files with full UTF-8 encoding support.',
-        dropzoneClick: 'Click here to select a spreadsheet file',
-        dropzoneOr: 'or drag and drop your file into this box',
-        supportedFormats: 'Supported formats: CSV, Excel (.xlsx, .xls) - Arabic & Urdu text preserved',
-        downloadSampleBtn: '📥 Download Sample Excel File',
-        selectedFileLabel: 'Selected File:',
-        importCompletedTitle: 'Bulk Import Process Completed!',
-        savedCountLabel: '✅ Successfully saved to database:',
-        skippedCountLabel: '⚠️ Skipped / invalid records:',
-        filterAllRows: 'All Records',
-        filterValidRows: 'Ready Records',
-        filterErrorRows: 'Duplicates & Errors',
-        saveValidBtn: '💾 Save Valid Records to Database',
-        colStatus: 'Record Status',
-        statusReady: 'Ready',
-        errMissingTitle: '⚠️ Missing title',
-        errMissingCat: '⚠️ Missing catalogue number',
-        errDupDb: '🛑 Duplicate catalogue number in DB',
-        errDupFile: '⚠️ Duplicate catalogue number in file',
-        noRowsInFilter: 'No records found matching this filter.',
-        bulkHelpFooter: 'You can directly edit table cells to correct duplicate numbers or missing titles before importing.',
-        closeBtn: 'Close',
-
-        addTitle: 'Add New Book Record',
-        editTitle: 'Edit Book Record',
-        fieldTitle: 'Book Title / Work Name:',
-        fieldAuthor: 'Author Name:',
-        fieldCatNo: 'Catalogue Number:',
-        fieldSerialNo: 'Serial Number:',
-        fieldSection: 'Alphabetical Section:',
-        fieldSourcePage: 'Source Page:',
-        fieldCategory: 'Subject Category:',
-        fieldTotalCopies: 'Total Copies:',
-        fieldAvailableCopies: 'Available Copies:',
-        cancelBtn: 'Cancel',
-        saveBtn: 'Save Record',
-
-        confirmDeleteTitle: 'Confirm Delete Record',
-        confirmDeleteMessage: 'Are you sure you want to permanently delete this book from the library database?',
-        confirmDeleteBtn: 'Yes, Delete Record',
-
-        bookDetailsTitle: 'Book Details',
-        subjectLabel: 'Subject Category:',
-
-        toastUpdateSuccess: 'Book details updated successfully!',
-        toastAddSuccess: 'New book record added to catalogue!',
-        toastDeleteSuccess: 'Book record deleted from database.',
-        toastResetSuccess: 'Database reset to original 50 books.',
-        toastImportSuccess: 'Success! Imported books saved to database!',
-
-        footerCopyright: '© Ummul Qura Library (مكتبة أم القرى) - Classical Arabic & Urdu Digital Cataloguing System',
-        footerFeature: 'Bulk CSV/Excel import & Dual Urdu/English UI active'
+        loginError: 'Incorrect password! Please try again.',
+        logoutBtn: 'Logout',
+        confirmDelete: 'Are you sure you want to delete this book record?',
+        dupWarningDb: 'Duplicate Catalogue Number (Exists in Database)',
+        dupWarningFile: 'Duplicate Catalogue Number (Repeated in Uploaded File)',
+        missingCatWarning: 'Missing Catalogue Number',
+        missingTitleWarning: 'Missing Book Title',
+        footerText: '© 2026 Ummul Qura Library (مكتبة أم القرى) - All rights reserved.'
       }
     };
 
-    // Main App Component
+    const HEADER_ALIASES = {
+      title: ['title', 'book title', 'اسم الكتاب', 'کتاب کا نام', 'عنوان'],
+      author: ['author', 'المؤلف', 'مصنف'],
+      serial_number: ['serial number', 'serial_number', 'serial', 'الرقم التسلسلي', 'سلسلہ نمبر'],
+      catalogue_number: ['catalogue number', 'catalogue_number', 'catalogue', 'رقم الفهرس', 'فہرست نمبر'],
+      alphabetical_section: ['alphabetical section', 'alphabetical_section', 'section', 'القسم الأبجدي', 'حرف', 'شعبہ'],
+      source_page: ['source page', 'source_page', 'page', 'رقم الصفحة', 'صفحہ نمبر', 'المصدر']
+    };
+
     function App() {
-      const [books, setBooks] = useState([]);
-      const [activeTab, setActiveTab] = useState('catalog'); // 'catalog' | 'admin'
-      const [lang, setLang] = useState('ur'); // 'ur' | 'en'
-      const [toast, setToast] = useState(null);
+      const [lang, setLang] = useState(() => localStorage.getItem('uql_app_lang') || 'ur');
+      const [books, setBooks] = useState(() => {
+        const saved = localStorage.getItem('uql_books_db');
+        if (saved) {
+          try { return JSON.parse(saved); } catch(e) {}
+        }
+        return INITIAL_50_BOOKS;
+      });
+
+      const [activeTab, setActiveTab] = useState('catalogue');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedSection, setSelectedSection] = useState('ALL');
+      const [selectedCategory, setSelectedCategory] = useState('ALL');
       const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-      const [showLoginModal, setShowLoginModal] = useState(false);
+      const [loginPassword, setLoginPassword] = useState('');
+      const [loginErrorMsg, setLoginErrorMsg] = useState('');
       const [showImportModal, setShowImportModal] = useState(false);
-      const [showAddModal, setShowAddModal] = useState(false);
+      const [showAddEditModal, setShowAddEditModal] = useState(false);
       const [editingBook, setEditingBook] = useState(null);
-      const [selectedDetailBook, setSelectedDetailBook] = useState(null);
-      const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+      const [viewingBook, setViewingBook] = useState(null);
+      const [toast, setToast] = useState(null);
 
-      // Initialize App State & Persistent Storage
+      const t = UI_TRANSLATIONS[lang];
+
       useEffect(() => {
-        // Load Language Preference
-        const savedLang = localStorage.getItem('uql_app_lang');
-        if (savedLang === 'en' || savedLang === 'ur') {
-          setLang(savedLang);
-        } else {
-          setLang('ur');
-        }
+        localStorage.setItem('uql_books_db', JSON.stringify(books));
+      }, [books]);
 
-        // Load Catalog Books
-        try {
-          const stored = localStorage.getItem('uql_books_db');
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              setBooks(parsed);
-              return;
-            }
-          }
-        } catch (e) {
-          console.error('LocalStorage read error:', e);
-        }
-
-        // Default setup if no localStorage
-        setBooks(INITIAL_50_BOOKS);
-        localStorage.setItem('uql_books_db', JSON.stringify(INITIAL_50_BOOKS));
-      }, []);
-
-      // Toggle Language Handler
-      const toggleLanguage = () => {
-        const nextLang = lang === 'ur' ? 'en' : 'ur';
-        setLang(nextLang);
-        localStorage.setItem('uql_app_lang', nextLang);
-      };
-
-      // Set HTML dir and lang attributes dynamically
       useEffect(() => {
+        localStorage.setItem('uql_app_lang', lang);
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === 'ur' ? 'rtl' : 'ltr';
       }, [lang]);
 
-      const t = (key) => UI_DICTIONARY[lang][key] || key;
-
-      // Handle Tab Switch (Guard Admin View)
-      const handleTabSwitch = (tab) => {
-        if (tab === 'admin' && !isAdminLoggedIn) {
-          setShowLoginModal(true);
-        } else {
-          setActiveTab(tab);
-        }
-      };
-
-      // Update State & LocalStorage Helper
-      const updateBooksStateAndStorage = (newList) => {
-        setBooks(newList);
-        localStorage.setItem('uql_books_db', JSON.stringify(newList));
-      };
-
-      // Toast Notification Helper
       const showToast = (message, type = 'success') => {
         setToast({ message, type });
         setTimeout(() => setToast(null), 4000);
       };
 
-      // Save or Edit Book
+      const toggleLanguage = () => {
+        setLang(prev => prev === 'ur' ? 'en' : 'ur');
+      };
+
+      const handleAdminLogin = (e) => {
+        e.preventDefault();
+        if (loginPassword === 'admin123' || loginPassword === '1234') {
+          setIsAdminLoggedIn(true);
+          setLoginErrorMsg('');
+          setLoginPassword('');
+          showToast(lang === 'ur' ? 'ایڈمن سیشن کامیابی سے شروع ہوا' : 'Admin session authenticated');
+        } else {
+          setLoginErrorMsg(t.loginError);
+        }
+      };
+
+      const alphabeticalSections = useMemo(() => {
+        const secSet = new Set(books.map(b => b.alphabetical_section).filter(Boolean));
+        return Array.from(secSet).sort();
+      }, [books]);
+
+      const categories = useMemo(() => {
+        const catSet = new Set(books.map(b => b.category).filter(Boolean));
+        return Array.from(catSet).sort();
+      }, [books]);
+
+      const filteredBooks = useMemo(() => {
+        return books.filter(book => {
+          const q = searchQuery.toLowerCase().trim();
+          const matchesSearch = !q || 
+            (book.title && book.title.toLowerCase().includes(q)) ||
+            (book.author && book.author.toLowerCase().includes(q)) ||
+            (book.catalogue_number && book.catalogue_number.toLowerCase().includes(q)) ||
+            (book.serial_number && book.serial_number.toLowerCase().includes(q));
+
+          const matchesSection = selectedSection === 'ALL' || book.alphabetical_section === selectedSection;
+          const matchesCategory = selectedCategory === 'ALL' || book.category === selectedCategory;
+
+          return matchesSearch && matchesSection && matchesCategory;
+        });
+      }, [books, searchQuery, selectedSection, selectedCategory]);
+
       const handleSaveBook = (bookData) => {
         if (editingBook) {
-          const updated = books.map(b => b.id === editingBook.id ? { ...b, ...bookData } : b);
-          updateBooksStateAndStorage(updated);
-          showToast(t('toastUpdateSuccess'));
+          setBooks(prev => prev.map(b => b.id === editingBook.id ? { ...b, ...bookData } : b));
+          showToast(lang === 'ur' ? 'کتاب کی تفصیلات اپ ڈیٹ کر دی گئیں' : 'Book updated successfully');
         } else {
-          const newBook = {
-            id: 'b_' + Date.now(),
-            ...bookData
-          };
-          updateBooksStateAndStorage([newBook, ...books]);
-          showToast(t('toastAddSuccess'));
+          const newBook = { id: Date.now().toString(), ...bookData };
+          setBooks(prev => [newBook, ...prev]);
+          showToast(lang === 'ur' ? 'نئی کتاب کامیابی سے شامل کی گئی' : 'New book added successfully');
         }
-        setShowAddModal(false);
+        setShowAddEditModal(false);
         setEditingBook(null);
       };
 
-      // Delete Book
       const handleDeleteBook = (id) => {
-        const updated = books.filter(b => b.id !== id);
-        updateBooksStateAndStorage(updated);
-        setConfirmDeleteId(null);
-        showToast(t('toastDeleteSuccess'), 'warning');
+        if (window.confirm(t.confirmDelete)) {
+          setBooks(prev => prev.filter(b => b.id !== id));
+          showToast(lang === 'ur' ? 'کتاب ریکارڈ سے حذف کر دی گئی' : 'Book record deleted', 'info');
+        }
       };
 
-      // Reset Database
-      const handleResetDatabase = () => {
-        updateBooksStateAndStorage(INITIAL_50_BOOKS);
-        showToast(t('toastResetSuccess'));
-      };
-
-      // Save Bulk Imported Records
-      const handleBulkImportSave = (cleanRecords) => {
-        const newEntries = cleanRecords.map((item, idx) => ({
-          id: 'imp_' + Date.now() + '_' + idx,
-          catalogue_number: item.catalogue_number || `UQL-IMP-${1000 + idx}`,
-          title: item.title || 'غير عنوان شدہ',
-          author: item.author || 'غير معروف مصنف',
-          serial_number: item.serial_number || `SN-IMP-${100 + idx}`,
-          alphabetical_section: item.alphabetical_section || 'أ',
-          category: item.category || 'عام تالیف',
-          source_page: item.source_page || 'ص ١',
-          total_copies: parseInt(item.total_copies) || 5,
-          available_copies: parseInt(item.available_copies) || 5
-        }));
-
-        const combined = [...newEntries, ...books];
-        updateBooksStateAndStorage(combined);
-        showToast(t('toastImportSuccess'), 'success');
+      const handleSaveImportedBooks = (newBooks) => {
+        setBooks(prev => [...newBooks, ...prev]);
+        showToast(
+          lang === 'ur' 
+            ? `${newBooks.length} کتب اُمّ القریٰ لائبریری میں شامل کر دی گئیں` 
+            : `${newBooks.length} books imported into Ummul Qura Library`
+        );
       };
 
       return (
-        <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
-          
-          {/* HEADER */}
-          <header className="bg-library-900 text-white shadow-xl border-b-2 border-gold-500 sticky top-0 z-30">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-4">
-              
-              {/* Logo & Correct Library Name */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center text-library-950 font-bold text-2xl shadow-md border border-gold-300">
-                  <i className="fa-solid fa-book-bookmark"></i>
+        <div className={`min-h-screen flex flex-col ${lang === 'ur' ? 'font-urdu' : 'font-en'}`}>
+          <header className="bg-emerald-900 text-amber-50 shadow-lg border-b border-emerald-800 sticky top-0 z-30">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+              <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                <div className="w-12 h-12 rounded-full bg-amber-500 text-emerald-950 flex items-center justify-center text-2xl font-bold shadow">
+                  🏛️
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold font-arabic-title text-gold-300 tracking-wide flex items-center gap-2">
-                    {t('appTitle')}
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-wide leading-tight">
+                    {lang === 'ur' ? 'اُمّ القریٰ لائبریری' : 'Ummul Qura Library'}
                   </h1>
-                  <p className="text-xs text-library-100">{t('appSubtitle')}</p>
+                  <p className="text-xs text-amber-200 opacity-90 font-arabic">
+                    مكتبة أم القرى | {t.appNameEn}
+                  </p>
                 </div>
               </div>
 
-              {/* Tabs & Controls */}
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-library-950 p-1.5 rounded-xl border border-library-800">
+              <div className="flex items-center space-x-2 sm:space-x-4 rtl:space-x-reverse">
+                <nav className="flex bg-emerald-950/60 p-1 rounded-lg border border-emerald-700/50">
                   <button
-                    onClick={() => handleTabSwitch('catalog')}
-                    className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
-                      activeTab === 'catalog'
-                        ? 'bg-gold-500 text-library-950 shadow-md'
-                        : 'text-library-100 hover:text-white hover:bg-library-800/60'
+                    onClick={() => setActiveTab('catalogue')}
+                    className={`px-3 sm:px-4 py-1.5 rounded-md text-sm font-semibold transition ${
+                      activeTab === 'catalogue' 
+                        ? 'bg-amber-500 text-emerald-950 shadow' 
+                        : 'text-amber-100 hover:text-white hover:bg-emerald-800/50'
                     }`}
                   >
-                    <i className="fa-solid fa-book-open"></i>
-                    <span>{t('publicCatalogTab')}</span>
+                    📖 {t.navCatalogue}
                   </button>
-
                   <button
-                    onClick={() => handleTabSwitch('admin')}
-                    className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 ${
-                      activeTab === 'admin'
-                        ? 'bg-gold-500 text-library-950 shadow-md'
-                        : 'text-library-100 hover:text-white hover:bg-library-800/60'
+                    onClick={() => setActiveTab('admin')}
+                    className={`px-3 sm:px-4 py-1.5 rounded-md text-sm font-semibold transition ${
+                      activeTab === 'admin' 
+                        ? 'bg-amber-500 text-emerald-950 shadow' 
+                        : 'text-amber-100 hover:text-white hover:bg-emerald-800/50'
                     }`}
                   >
-                    <i className="fa-solid fa-user-shield"></i>
-                    <span>{t('adminDashboardTab')}</span>
-                    <span className="bg-library-900 text-gold-300 text-xs px-2 py-0.5 rounded-full font-bold">
-                      {books.length}
-                    </span>
+                    ⚙️ {t.navAdmin}
                   </button>
-                </div>
+                </nav>
 
-                {/* Admin Logout Button */}
-                {isAdminLoggedIn && (
-                  <button
-                    onClick={() => { setIsAdminLoggedIn(false); setActiveTab('catalog'); }}
-                    className="bg-red-700 hover:bg-red-600 text-white font-bold px-3 py-2 rounded-xl text-xs shadow transition flex items-center gap-1.5"
-                    title={t('adminLogout')}
-                  >
-                    <i className="fa-solid fa-right-from-bracket"></i>
-                    <span className="hidden sm:inline">{t('adminLogout')}</span>
-                  </button>
-                )}
-
-                {/* LANGUAGE SWITCHER BUTTON */}
                 <button
                   onClick={toggleLanguage}
-                  className="bg-gold-500 hover:bg-gold-400 text-library-950 font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center gap-2 border border-gold-300"
-                  title="Toggle Language / زبان منتخب کریں"
+                  className="bg-amber-400 hover:bg-amber-300 text-emerald-950 px-3 py-1.5 rounded-md text-sm font-bold flex items-center space-x-1 rtl:space-x-reverse shadow transition transform active:scale-95"
                 >
-                  <i className="fa-solid fa-globe"></i>
-                  <span>{lang === 'ur' ? '🌐 English' : '🌐 اردو'}</span>
+                  <span>🌐</span>
+                  <span>{t.langSwitchBtn}</span>
                 </button>
               </div>
-
             </div>
           </header>
 
-          {/* MAIN CONTENT VIEW */}
-          <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            {activeTab === 'catalog' ? (
-              <PublicCatalog
-                books={books}
-                onSelectDetail={(b) => setSelectedDetailBook(b)}
-                t={t}
-              />
-            ) : (
-              <AdminDashboard
-                books={books}
-                onOpenImport={() => setShowImportModal(true)}
-                onOpenAdd={() => { setEditingBook(null); setShowAddModal(true); }}
-                onEditBook={(b) => { setEditingBook(b); setShowAddModal(true); }}
-                onDeleteBook={(id) => setConfirmDeleteId(id)}
-                onResetDatabase={handleResetDatabase}
-                t={t}
-              />
+          {toast && (
+            <div className={`fixed top-24 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-lg shadow-xl text-white text-sm font-bold transition-all ${
+              toast.type === 'info' ? 'bg-amber-600' : 'bg-emerald-700'
+            }`}>
+              {toast.message}
+            </div>
+          )}
+
+          <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            {activeTab === 'catalogue' && (
+              <div className="space-y-6">
+                <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl p-6 sm:p-8 text-white shadow-md border border-emerald-700">
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-2">
+                    {t.heroTitle}
+                  </h2>
+                  <p className="text-emerald-100 text-sm sm:text-base max-w-3xl">
+                    {t.heroSubtitle}
+                  </p>
+                  
+                  <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6 pt-6 border-t border-emerald-700/60">
+                    <div className="bg-emerald-950/40 backdrop-blur-sm p-3 rounded-xl border border-emerald-600/30 text-center">
+                      <div className="text-xl sm:text-3xl font-extrabold text-amber-400">{books.length}</div>
+                      <div className="text-xs text-emerald-200 mt-1">{t.statsTotal}</div>
+                    </div>
+                    <div className="bg-emerald-950/40 backdrop-blur-sm p-3 rounded-xl border border-emerald-600/30 text-center">
+                      <div className="text-xl sm:text-3xl font-extrabold text-amber-400">{categories.length}</div>
+                      <div className="text-xs text-emerald-200 mt-1">{t.statsCategories}</div>
+                    </div>
+                    <div className="bg-emerald-950/40 backdrop-blur-sm p-3 rounded-xl border border-emerald-600/30 text-center">
+                      <div className="text-xl sm:text-3xl font-extrabold text-amber-400">{alphabeticalSections.length}</div>
+                      <div className="text-xs text-emerald-200 mt-1">{t.statsSections}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
+                    <div className="md:col-span-6 relative">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder={t.searchPlaceholder}
+                        className="w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 focus:bg-white text-sm"
+                      />
+                      <span className="absolute inset-y-0 ltr:right-3 rtl:left-3 flex items-center pointer-events-none text-slate-400">
+                        🔍
+                      </span>
+                    </div>
+
+                    <div className="md:col-span-3">
+                      <select
+                        value={selectedSection}
+                        onChange={(e) => setSelectedSection(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 text-sm font-semibold"
+                      >
+                        <option value="ALL">{t.filterAllSections}</option>
+                        {alphabeticalSections.map(sec => (
+                          <option key={sec} value={sec}>القسم: {sec}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="md:col-span-3">
+                      <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-600 text-sm font-semibold"
+                      >
+                        <option value="ALL">{t.filterAllCategories}</option>
+                        {categories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-right rtl:text-right ltr:text-left border-collapse">
+                      <thead>
+                        <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 text-xs sm:text-sm uppercase font-bold">
+                          <th className="py-3.5 px-4">{t.tableHeaderCatNo}</th>
+                          <th className="py-3.5 px-4">{t.tableHeaderTitle}</th>
+                          <th className="py-3.5 px-4">{t.tableHeaderAuthor}</th>
+                          <th className="py-3.5 px-4">{t.tableHeaderSerial}</th>
+                          <th className="py-3.5 px-4">{t.tableHeaderSection}</th>
+                          <th className="py-3.5 px-4">{t.tableHeaderPage}</th>
+                          <th className="py-3.5 px-4">{t.tableHeaderActions}</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 text-sm">
+                        {filteredBooks.length === 0 ? (
+                          <tr>
+                            <td colSpan="7" className="text-center py-12 text-slate-500">
+                              {lang === 'ur' ? 'کوئی کتاب دستیاب نہیں ہے یا تلاش کے مطابق نہیں ملی۔' : 'No books found matching your query.'}
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredBooks.map((book) => (
+                            <tr key={book.id} className="hover:bg-emerald-50/40 transition">
+                              <td className="py-3 px-4 font-mono font-semibold text-emerald-800 text-xs sm:text-sm">
+                                {book.catalogue_number}
+                              </td>
+                              <td className="py-3 px-4 font-bold text-slate-900 text-base font-arabic">
+                                {book.title}
+                              </td>
+                              <td className="py-3 px-4 text-slate-700 font-arabic">
+                                {book.author}
+                              </td>
+                              <td className="py-3 px-4 font-mono text-slate-600 text-xs">
+                                {book.serial_number || '-'}
+                              </td>
+                              <td className="py-3 px-4">
+                                <span className="inline-block bg-amber-100 text-amber-900 font-bold px-2.5 py-0.5 rounded-full text-xs">
+                                  {book.alphabetical_section || '-'}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4 text-slate-600 text-xs">
+                                {book.source_page || '-'}
+                              </td>
+                              <td className="py-3 px-4">
+                                <button
+                                  onClick={() => setViewingBook(book)}
+                                  className="text-xs bg-emerald-100 hover:bg-emerald-200 text-emerald-900 font-bold px-3 py-1.5 rounded-lg transition"
+                                >
+                                  👁️ {t.btnViewDetails}
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'admin' && (
+              <div className="space-y-6">
+                {!isAdminLoggedIn ? (
+                  <div className="max-w-md mx-auto bg-white p-8 rounded-2xl shadow-md border border-slate-200 mt-8 text-center space-y-4">
+                    <div className="w-16 h-16 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mx-auto text-3xl">
+                      🔐
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-900">{t.loginTitle}</h3>
+                    <p className="text-xs text-slate-500">
+                      (Password: <code className="bg-slate-100 px-1 py-0.5 rounded">admin123</code>)
+                    </p>
+
+                    <form onSubmit={handleAdminLogin} className="space-y-4 text-right rtl:text-right ltr:text-left mt-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">
+                          {t.loginPassLabel}
+                        </label>
+                        <input
+                          type="password"
+                          value={loginPassword}
+                          onChange={(e) => setLoginPassword(e.target.value)}
+                          className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-600"
+                          placeholder="••••••••"
+                        />
+                      </div>
+                      {loginErrorMsg && (
+                        <p className="text-xs text-rose-600 font-semibold">{loginErrorMsg}</p>
+                      )}
+                      <button
+                        type="submit"
+                        className="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow text-sm transition"
+                      >
+                        {t.loginBtn}
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  <>
+                    <div className="bg-emerald-950 text-white rounded-2xl p-6 shadow-md border border-emerald-900 flex flex-col md:flex-row justify-between items-center gap-4">
+                      <div>
+                        <h2 className="text-2xl font-bold text-amber-400">
+                          ⚙️ {lang === 'ur' ? 'اُمّ القریٰ لائبریری - ایڈمن کنٹرول' : 'Ummul Qura Library - Admin Control'}
+                        </h2>
+                        <p className="text-xs text-emerald-200 mt-1">
+                          {lang === 'ur' 
+                            ? 'کتب کی انفرادی شمولیت، بلک یکمشت اپلوڈ، ڈیٹا بیس ترمیم اور ریکارڈ کی حذف کاری' 
+                            : 'Manage library entries, perform bulk CSV/Excel imports, and update records'}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-3">
+                        <button
+                          onClick={() => { setEditingBook(null); setShowAddEditModal(true); }}
+                          className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow flex items-center space-x-2 rtl:space-x-reverse transition"
+                        >
+                          <span>{t.btnAddBook}</span>
+                        </button>
+
+                        <button
+                          onClick={() => setShowImportModal(true)}
+                          className="bg-amber-500 hover:bg-amber-400 text-emerald-950 font-extrabold px-4 py-2.5 rounded-xl text-sm shadow-lg border border-amber-300 flex items-center space-x-2 rtl:space-x-reverse transition transform active:scale-95"
+                        >
+                          <span>{t.btnBulkImport}</span>
+                        </button>
+
+                        <button
+                          onClick={() => setIsAdminLoggedIn(false)}
+                          className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3 py-2.5 rounded-xl text-xs transition"
+                        >
+                          🚪 {t.logoutBtn}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                      <div className="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <h3 className="font-bold text-slate-800 text-base">
+                          {lang === 'ur' ? 'ڈیٹا بیس کی تمام کتب' : 'All Database Books'} ({books.length})
+                        </h3>
+                        <span className="text-xs text-emerald-800 font-semibold bg-emerald-100 px-3 py-1 rounded-full">
+                          {lang === 'ur' ? 'محفوظ شدا ریکارڈر' : 'Persistent Storage Active'}
+                        </span>
+                      </div>
+
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-right rtl:text-right ltr:text-left border-collapse">
+                          <thead>
+                            <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 text-xs uppercase font-bold">
+                              <th className="py-3 px-4">{t.tableHeaderCatNo}</th>
+                              <th className="py-3 px-4">{t.tableHeaderTitle}</th>
+                              <th className="py-3 px-4">{t.tableHeaderAuthor}</th>
+                              <th className="py-3 px-4">{t.tableHeaderSerial}</th>
+                              <th className="py-3 px-4">{t.tableHeaderSection}</th>
+                              <th className="py-3 px-4">{t.tableHeaderPage}</th>
+                              <th className="py-3 px-4 text-center">{t.tableHeaderActions}</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-200 text-sm">
+                            {books.map((book) => (
+                              <tr key={book.id} className="hover:bg-slate-50 transition">
+                                <td className="py-3 px-4 font-mono font-bold text-emerald-800 text-xs">
+                                  {book.catalogue_number}
+                                </td>
+                                <td className="py-3 px-4 font-bold text-slate-900 font-arabic">
+                                  {book.title}
+                                </td>
+                                <td className="py-3 px-4 text-slate-700 font-arabic text-xs">
+                                  {book.author}
+                                </td>
+                                <td className="py-3 px-4 font-mono text-slate-500 text-xs">
+                                  {book.serial_number || '-'}
+                                </td>
+                                <td className="py-3 px-4 text-xs font-bold text-amber-900">
+                                  {book.alphabetical_section || '-'}
+                                </td>
+                                <td className="py-3 px-4 text-slate-500 text-xs">
+                                  {book.source_page || '-'}
+                                </td>
+                                <td className="py-3 px-4 text-center space-x-1 rtl:space-x-reverse">
+                                  <button
+                                    onClick={() => { setEditingBook(book); setShowAddEditModal(true); }}
+                                    className="bg-blue-100 hover:bg-blue-200 text-blue-900 text-xs px-2.5 py-1 rounded font-bold"
+                                  >
+                                    ✏️ {t.btnEdit}
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteBook(book.id)}
+                                    className="bg-rose-100 hover:bg-rose-200 text-rose-900 text-xs px-2.5 py-1 rounded font-bold"
+                                  >
+                                    🗑️ {t.btnDelete}
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             )}
           </main>
 
-          {/* FOOTER */}
-          <footer className="bg-slate-900 text-slate-400 text-xs py-5 border-t border-slate-800 text-center mt-auto">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-2">
-              <p>{t('footerCopyright')}</p>
-              <p className="text-slate-500">{t('footerFeature')}</p>
-            </div>
-          </footer>
-
-          {/* TOAST NOTIFICATION */}
-          {toast && (
-            <div className={`fixed bottom-5 ${lang === 'ur' ? 'left-5' : 'right-5'} z-50 animate-bounce`}>
-              <div className={`px-5 py-3 rounded-xl shadow-2xl text-white font-bold text-sm flex items-center gap-3 border ${
-                toast.type === 'warning' ? 'bg-amber-600 border-amber-400' : 'bg-library-800 border-library-600'
-              }`}>
-                <i className={`fa-solid ${toast.type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-check'} text-lg`}></i>
-                <span>{toast.message}</span>
-              </div>
-            </div>
-          )}
-
-          {/* ADMIN LOGIN MODAL */}
-          {showLoginModal && (
-            <AdminLoginModal
-              onSuccess={() => {
-                setIsAdminLoggedIn(true);
-                setShowLoginModal(false);
-                setActiveTab('admin');
-              }}
-              onClose={() => setShowLoginModal(false)}
-              t={t}
-            />
-          )}
-
-          {/* BULK IMPORT MODAL */}
           {showImportModal && (
-            <BulkBookImporter
+            <BulkImporterModal
               existingBooks={books}
-              onSaveImportedBooks={handleBulkImportSave}
+              onSave={handleSaveImportedBooks}
               onClose={() => setShowImportModal(false)}
               t={t}
               lang={lang}
             />
           )}
 
-          {/* ADD / EDIT BOOK MODAL */}
-          {showAddModal && (
+          {showAddEditModal && (
             <AddEditBookModal
               book={editingBook}
               onSave={handleSaveBook}
-              onClose={() => { setShowAddModal(false); setEditingBook(null); }}
+              onClose={() => { setShowAddEditModal(false); setEditingBook(null); }}
               t={t}
+              lang={lang}
             />
           )}
 
-          {/* BOOK DETAIL MODAL */}
-          {selectedDetailBook && (
-            <BookDetailModal
-              book={selectedDetailBook}
-              onClose={() => setSelectedDetailBook(null)}
+          {viewingBook && (
+            <ViewBookDetailsModal
+              book={viewingBook}
+              onClose={() => setViewingBook(null)}
               t={t}
+              lang={lang}
             />
           )}
 
-          {/* DELETE CONFIRMATION MODAL */}
-          {confirmDeleteId && (
-            <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 text-center space-y-4">
-                <div className="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-2xl">
-                  <i className="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <h3 className="text-lg font-bold text-slate-900">{t('confirmDeleteTitle')}</h3>
-                <p className="text-slate-600 text-xs leading-relaxed">{t('confirmDeleteMessage')}</p>
-                <div className="flex justify-center gap-3 pt-2">
-                  <button
-                    onClick={() => handleDeleteBook(confirmDeleteId)}
-                    className="bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition"
-                  >
-                    {t('confirmDeleteBtn')}
-                  </button>
-                  <button
-                    onClick={() => setConfirmDeleteId(null)}
-                    className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold px-5 py-2.5 rounded-xl text-xs transition"
-                  >
-                    {t('cancelBtn')}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-        </div>
-      );
-    }
-
-    // =========================================================================
-    // ADMIN LOGIN MODAL
-    // =========================================================================
-    function AdminLoginModal({ onSuccess, onClose, t }) {
-      const [password, setPassword] = useState('');
-      const [errorMsg, setErrorMsg] = useState('');
-
-      const handleLogin = (e) => {
-        e.preventDefault();
-        if (password === 'admin123' || password === 'admin') {
-          onSuccess();
-        } else {
-          setErrorMsg(t('invalidPasswordMsg'));
-        }
-      };
-
-      return (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2 text-library-900 font-bold text-lg">
-                <i className="fa-solid fa-user-lock text-gold-500"></i>
-                <span>{t('loginModalTitle')}</span>
-              </div>
-              <button onClick={onClose} className="text-slate-400 hover:text-slate-700 text-lg">
-                <i className="fa-solid fa-xmark"></i>
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-600">{t('loginModalSubtitle')}</p>
-
-            <form onSubmit={handleLogin} className="space-y-4 pt-1">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5">{t('passwordLabel')}</label>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setErrorMsg(''); }}
-                  placeholder={t('passwordPlaceholder')}
-                  className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs focus:ring-2 focus:ring-gold-500 focus:outline-none"
-                />
-              </div>
-
-              {errorMsg && (
-                <div className="p-3 bg-red-50 text-red-700 border border-red-200 rounded-xl text-xs font-bold">
-                  {errorMsg}
-                </div>
-              )}
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs hover:bg-slate-300 transition"
-                >
-                  {t('cancelBtn')}
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 bg-library-800 text-white font-bold rounded-xl text-xs hover:bg-library-900 transition shadow"
-                >
-                  {t('loginBtn')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      );
-    }
-
-    // =========================================================================
-    // PUBLIC CATALOGUE COMPONENT
-    // =========================================================================
-    function PublicCatalog({ books, onSelectDetail, t }) {
-      const [searchTerm, setSearchTerm] = useState('');
-      const [selectedSection, setSelectedSection] = useState('ALL');
-      const [selectedCategory, setSelectedCategory] = useState('ALL');
-
-      const sections = useMemo(() => {
-        const set = new Set(books.map(b => b.alphabetical_section).filter(Boolean));
-        return ['ALL', ...Array.from(set).sort()];
-      }, [books]);
-
-      const categories = useMemo(() => {
-        const set = new Set(books.map(b => b.category).filter(Boolean));
-        return ['ALL', ...Array.from(set).sort()];
-      }, [books]);
-
-      const filteredBooks = useMemo(() => {
-        return books.filter(b => {
-          const matchSearch =
-            (b.title && b.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (b.author && b.author.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (b.catalogue_number && b.catalogue_number.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (b.serial_number && b.serial_number.toLowerCase().includes(searchTerm.toLowerCase()));
-
-          const matchSection = selectedSection === 'ALL' || b.alphabetical_section === selectedSection;
-          const matchCategory = selectedCategory === 'ALL' || b.category === selectedCategory;
-
-          return matchSearch && matchSection && matchCategory;
-        });
-      }, [books, searchTerm, selectedSection, selectedCategory]);
-
-      return (
-        <div className="space-y-6">
-          
-          {/* Hero Banner with Search */}
-          <div className="bg-gradient-to-r from-library-950 via-slate-900 to-library-950 rounded-2xl p-6 sm:p-8 text-white shadow-xl border border-library-700/50 relative overflow-hidden">
-            <div className="relative z-10 max-w-3xl space-y-3">
-              <h2 className="text-2xl sm:text-3xl font-bold font-arabic-title text-gold-300">
-                {t('searchTitle')}
-              </h2>
-              <p className="text-library-100 text-xs sm:text-sm leading-relaxed">
-                {t('searchSubtitle')}
+          <footer className="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 mt-12">
+            <div className="max-w-7xl mx-auto px-4">
+              <p className="font-semibold text-slate-300">{t.footerText}</p>
+              <p className="text-slate-500 text-[11px] mt-1 font-arabic">
+                مكتبة أم القرى - نظام الفهرسة الرقمي بلغة اردو والإنجليزية
               </p>
-
-              {/* Search Field */}
-              <div className="relative mt-3">
-                <i className="fa-solid fa-magnifying-glass absolute ltr:left-4 rtl:right-4 top-1/2 -translate-y-1/2 text-slate-400 text-base"></i>
-                <input
-                  type="text"
-                  placeholder={t('searchPlaceholder')}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full ltr:pl-12 ltr:pr-4 rtl:pr-12 rtl:pl-4 py-3.5 bg-slate-800/90 text-white placeholder-slate-400 rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-gold-400 text-xs sm:text-sm shadow-inner"
-                />
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="absolute ltr:right-3 rtl:left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white px-2 py-1 text-xs"
-                  >
-                    <i className="fa-solid fa-xmark"></i>
-                  </button>
-                )}
-              </div>
             </div>
-          </div>
-
-          {/* Section & Category Filters */}
-          <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500 pb-3 border-b border-slate-100">
-              <span className="font-bold text-slate-700 flex items-center gap-1.5">
-                <i className="fa-solid fa-filter text-gold-500"></i>
-                <span>{t('filtersHeading')}</span>
-              </span>
-              <span>{t('booksCountLabel')} <strong className="text-library-800 font-bold">{filteredBooks.length}</strong> {t('outOfLabel')} {books.length}</span>
-            </div>
-
-            {/* Section Pills */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-1">
-              <span className="text-xs font-bold text-slate-700 me-2">{t('alphabeticalSectionLabel')}</span>
-              {sections.map(sec => (
-                <button
-                  key={sec}
-                  onClick={() => setSelectedSection(sec)}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
-                    selectedSection === sec
-                      ? 'bg-gold-500 text-library-950 shadow-sm'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {sec === 'ALL' ? t('allSections') : sec}
-                </button>
-              ))}
-            </div>
-
-            {/* Category Pills */}
-            {categories.length > 1 && (
-              <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-100">
-                <span className="text-xs font-bold text-slate-700 me-2">{t('categoryLabel')}</span>
-                {categories.map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-0.5 rounded-full text-xs transition ${
-                      selectedCategory === cat
-                        ? 'bg-library-800 text-gold-300 font-bold'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {cat === 'ALL' ? t('allCategories') : cat}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Book Cards Grid */}
-          {filteredBooks.length === 0 ? (
-            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 text-slate-500 space-y-3">
-              <i className="fa-solid fa-book-bookmark text-4xl text-slate-300"></i>
-              <p className="font-bold text-slate-700">{t('noBooksFound')}</p>
-              <button
-                onClick={() => { setSearchTerm(''); setSelectedSection('ALL'); setSelectedCategory('ALL'); }}
-                className="text-xs text-library-800 font-bold underline"
-              >
-                {t('resetFilters')}
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredBooks.map(book => (
-                <div
-                  key={book.id}
-                  className="bg-white rounded-2xl border border-slate-200 hover:border-gold-400 p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between group"
-                >
-                  <div className="space-y-3">
-                    
-                    {/* Header: Cat No & Section Badge */}
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="bg-library-50 text-library-900 border border-library-200 font-mono font-bold text-xs px-2.5 py-1 rounded-md">
-                        {book.catalogue_number}
-                      </span>
-                      <span className="bg-gold-100 text-library-950 border border-gold-300 text-xs px-2.5 py-0.5 rounded-md font-bold">
-                        {t('sectionPrefix')} {book.alphabetical_section}
-                      </span>
-                    </div>
-
-                    {/* Book Title */}
-                    <h3 className="text-lg font-bold font-arabic-title text-slate-900 leading-snug group-hover:text-library-800 transition">
-                      {book.title}
-                    </h3>
-
-                    {/* Author */}
-                    <p className="text-xs text-slate-600 flex items-center gap-1.5">
-                      <i className="fa-solid fa-feather text-slate-400"></i>
-                      <span>{t('authorPrefix')} <strong className="text-slate-800">{book.author}</strong></span>
-                    </p>
-
-                    {/* Metadata Grid */}
-                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl font-mono">
-                      <div><span className="text-slate-400 font-sans">{t('serialPrefix')}</span> {book.serial_number}</div>
-                      <div><span className="text-slate-400 font-sans">{t('sourcePagePrefix')}</span> {book.source_page}</div>
-                    </div>
-                  </div>
-
-                  {/* Card Footer */}
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-xs bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full font-bold">
-                      {book.category || 'عام'}
-                    </span>
-                    <button
-                      onClick={() => onSelectDetail(book)}
-                      className="text-xs font-bold text-library-800 hover:text-library-950 flex items-center gap-1.5"
-                    >
-                      <span>{t('viewDetails')}</span>
-                      <i className="fa-solid fa-arrow-right ltr:rotate-0 rtl:rotate-180 text-[10px]"></i>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
+          </footer>
         </div>
       );
     }
 
-    // =========================================================================
-    // ADMIN DASHBOARD COMPONENT
-    // =========================================================================
-    function AdminDashboard({ books, onOpenImport, onOpenAdd, onEditBook, onDeleteBook, onResetDatabase, t }) {
-      const [adminSearch, setAdminSearch] = useState('');
-      const [currentPage, setCurrentPage] = useState(1);
-      const itemsPerPage = 10;
-
-      const totalCopiesSum = useMemo(() => {
-        return books.reduce((acc, b) => acc + (parseInt(b.available_copies) || 0), 0);
-      }, [books]);
-
-      const filtered = useMemo(() => {
-        return books.filter(b => 
-          (b.title && b.title.toLowerCase().includes(adminSearch.toLowerCase())) ||
-          (b.author && b.author.toLowerCase().includes(adminSearch.toLowerCase())) ||
-          (b.catalogue_number && b.catalogue_number.toLowerCase().includes(adminSearch.toLowerCase()))
-        );
-      }, [books, adminSearch]);
-
-      const totalPages = Math.ceil(filtered.length / itemsPerPage) || 1;
-      const paginated = useMemo(() => {
-        const start = (currentPage - 1) * itemsPerPage;
-        return filtered.slice(start, start + itemsPerPage);
-      }, [filtered, currentPage]);
-
-      return (
-        <div className="space-y-6">
-          
-          {/* KEY METRICS CARDS */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500 font-bold">{t('metricTotalBooks')}</p>
-                <h4 className="text-2xl font-bold text-slate-900 mt-1">{books.length}</h4>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-library-100 text-library-800 flex items-center justify-center text-xl">
-                <i className="fa-solid fa-books"></i>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500 font-bold">{t('metricTotalCopies')}</p>
-                <h4 className="text-2xl font-bold text-slate-900 mt-1">{totalCopiesSum}</h4>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-xl">
-                <i className="fa-solid fa-copy"></i>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500 font-bold">{t('metricCategoriesCount')}</p>
-                <h4 className="text-2xl font-bold text-slate-900 mt-1">
-                  {new Set(books.map(b => b.category)).size}
-                </h4>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center text-xl">
-                <i className="fa-solid fa-layer-group"></i>
-              </div>
-            </div>
-
-            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500 font-bold">{t('metricSectionsCount')}</p>
-                <h4 className="text-2xl font-bold text-slate-900 mt-1">
-                  {new Set(books.map(b => b.alphabetical_section)).size}
-                </h4>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center text-xl">
-                <i className="fa-solid fa-table-cells"></i>
-              </div>
-            </div>
-          </div>
-
-          {/* ACTION TOOLBAR WITH PROMINENT BULK IMPORT BUTTON */}
-          <div className="bg-gradient-to-r from-library-950 via-slate-900 to-library-950 rounded-2xl p-5 text-white shadow-lg border border-library-800 flex flex-col md:flex-row items-center justify-between gap-4">
-            
-            <div className="space-y-1 text-center ltr:md:text-left rtl:md:text-right">
-              <h3 className="text-lg font-bold text-gold-300">{t('adminHeaderTitle')}</h3>
-              <p className="text-xs text-library-100">{t('adminHeaderSubtitle')}</p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              
-              {/* === BULK IMPORT BUTTON === */}
-              <button
-                onClick={onOpenImport}
-                id="admin-import-books-btn"
-                className="bg-library-700 hover:bg-library-600 text-white font-bold px-5 py-3 rounded-xl shadow-lg flex items-center gap-2.5 transition transform hover:-translate-y-0.5 border border-library-500 text-xs sm:text-sm ring-2 ring-library-400/30"
-              >
-                <i className="fa-solid fa-file-excel text-lg text-gold-300"></i>
-                <span>{t('bulkImportBtn')}</span>
-              </button>
-
-              {/* Add Single Book */}
-              <button
-                onClick={onOpenAdd}
-                className="bg-gold-500 hover:bg-gold-400 text-library-950 font-bold px-4 py-3 rounded-xl shadow-md transition flex items-center gap-2 text-xs sm:text-sm"
-              >
-                <i className="fa-solid fa-plus"></i>
-                <span>{t('addBookBtn')}</span>
-              </button>
-
-              {/* Reset Database */}
-              <button
-                onClick={onResetDatabase}
-                title={t('resetDbBtnTooltip')}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-200 p-3 rounded-xl transition text-xs border border-slate-700"
-              >
-                <i className="fa-solid fa-rotate"></i>
-              </button>
-            </div>
-          </div>
-
-          {/* DATA TABLE CONTAINER */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            
-            <div className="p-4 border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50">
-              <div className="relative w-full sm:w-80">
-                <i className="fa-solid fa-magnifying-glass absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                <input
-                  type="text"
-                  placeholder={t('tableSearchPlaceholder')}
-                  value={adminSearch}
-                  onChange={(e) => { setAdminSearch(e.target.value); setCurrentPage(1); }}
-                  className="w-full ltr:pl-9 ltr:pr-3 rtl:pr-9 rtl:pl-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500"
-                />
-              </div>
-
-              <div className="text-xs text-slate-600">
-                {t('recordsShown')} <strong>{paginated.length}</strong> {t('outOfLabel')} {filtered.length}
-              </div>
-            </div>
-
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs ltr:text-left rtl:text-right">
-                <thead className="bg-slate-800 text-white font-bold border-b border-slate-700">
-                  <tr>
-                    <th className="p-3.5">{t('colCatNo')}</th>
-                    <th className="p-3.5">{t('colTitle')}</th>
-                    <th className="p-3.5">{t('colAuthor')}</th>
-                    <th className="p-3.5">{t('colSerialNo')}</th>
-                    <th className="p-3.5">{t('colSection')}</th>
-                    <th className="p-3.5">{t('colCategory')}</th>
-                    <th className="p-3.5">{t('colSourcePage')}</th>
-                    <th className="p-3.5 text-center">{t('colActions')}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {paginated.length === 0 ? (
-                    <tr>
-                      <td colSpan="8" className="p-8 text-center text-slate-400">
-                        {t('noBooksFound')}
-                      </td>
-                    </tr>
-                  ) : (
-                    paginated.map(b => (
-                      <tr key={b.id} className="hover:bg-slate-50 transition">
-                        <td className="p-3.5 font-mono font-bold text-library-900">{b.catalogue_number}</td>
-                        <td className="p-3.5 font-bold font-arabic-title text-slate-900 text-sm">{b.title}</td>
-                        <td className="p-3.5 text-slate-700">{b.author}</td>
-                        <td className="p-3.5 font-mono text-slate-500">{b.serial_number}</td>
-                        <td className="p-3.5">
-                          <span className="bg-amber-50 text-amber-900 px-2.5 py-0.5 rounded border border-amber-200 font-bold">
-                            {b.alphabetical_section}
-                          </span>
-                        </td>
-                        <td className="p-3.5 text-slate-600">{b.category || 'عام'}</td>
-                        <td className="p-3.5 text-slate-600 font-mono">{b.source_page}</td>
-                        <td className="p-3.5 text-center space-x-1.5 rtl:space-x-reverse">
-                          <button
-                            onClick={() => onEditBook(b)}
-                            className="bg-blue-50 text-blue-700 hover:bg-blue-100 p-1.5 rounded-md transition"
-                            title={t('editTooltip')}
-                          >
-                            <i className="fa-solid fa-pen-to-square"></i>
-                          </button>
-                          <button
-                            onClick={() => onDeleteBook(b.id)}
-                            className="bg-red-50 text-red-700 hover:bg-red-100 p-1.5 rounded-md transition"
-                            title={t('deleteTooltip')}
-                          >
-                            <i className="fa-solid fa-trash-can"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="p-4 border-t border-slate-200 flex items-center justify-between text-xs bg-slate-50">
-                <button
-                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="px-3.5 py-1.5 rounded bg-white border border-slate-300 text-slate-700 disabled:opacity-40 font-bold"
-                >
-                  {t('prevPage')}
-                </button>
-                <span className="text-slate-600">
-                  {t('pageLabel')} <strong>{currentPage}</strong> {t('outOfLabel')} <strong>{totalPages}</strong>
-                </span>
-                <button
-                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-                  disabled={currentPage === totalPages}
-                  className="px-3.5 py-1.5 rounded bg-white border border-slate-300 text-slate-700 disabled:opacity-40 font-bold"
-                >
-                  {t('nextPage')}
-                </button>
-              </div>
-            )}
-
-          </div>
-
-        </div>
-      );
-    }
-
-    // =========================================================================
-    // BULK BOOK IMPORTER COMPONENT
-    // =========================================================================
-    function BulkBookImporter({ existingBooks, onSaveImportedBooks, onClose, t, lang }) {
-      const [parsedRows, setParsedRows] = useState([]);
+    function BulkImporterModal({ existingBooks, onSave, onClose, t, lang }) {
+      const [parsedData, setParsedData] = useState([]);
       const [fileName, setFileName] = useState('');
-      const [filterMode, setFilterMode] = useState('ALL'); // 'ALL' | 'VALID' | 'ERRORS'
       const [importSummary, setImportSummary] = useState(null);
-      const [isDragging, setIsDragging] = useState(false);
+      const fileInputRef = useRef(null);
 
       const existingCatNumbers = useMemo(() => {
-        return new Set(existingBooks.map(b => String(b.catalogue_number || '').trim().toLowerCase()));
+        return new Set(existingBooks.map(b => String(b.catalogue_number || '').trim()));
       }, [existingBooks]);
 
-      const mapRawRowToBookSchema = (rawRow) => {
-        const rowKeys = Object.keys(rawRow);
-        const mapped = {};
+      const mapRawRowToSchema = (rawRow) => {
+        const row = {};
+        const keys = Object.keys(rawRow);
 
-        Object.keys(HEADER_MAP).forEach(standardKey => {
-          const matchedKey = rowKeys.find(rk => 
-            HEADER_MAP[standardKey].includes(String(rk).trim().toLowerCase())
+        Object.keys(HEADER_ALIASES).forEach((standardKey) => {
+          const matchKey = keys.find(k => 
+            HEADER_ALIASES[standardKey].includes(String(k).trim().toLowerCase())
           );
-          mapped[standardKey] = matchedKey ? String(rawRow[matchedKey]).trim() : '';
+          row[standardKey] = matchKey ? String(rawRow[matchKey]).trim() : '';
         });
 
-        return mapped;
-      };
-
-      const validateItem = (item, index, allItems) => {
-        const catNum = String(item.catalogue_number || '').trim();
-        const title = String(item.title || '').trim();
-
-        let isDuplicateDB = false;
-        let isDuplicateFile = false;
-        let warning = '';
-
-        if (!title) {
-          warning = t('errMissingTitle');
-        } else if (!catNum) {
-          warning = t('errMissingCat');
-        } else if (existingCatNumbers.has(catNum.toLowerCase())) {
-          isDuplicateDB = true;
-          warning = t('errDupDb');
-        } else {
-          const firstIdx = allItems.findIndex(x => String(x.catalogue_number || '').trim().toLowerCase() === catNum.toLowerCase());
-          if (firstIdx !== -1 && firstIdx < index) {
-            isDuplicateFile = true;
-            warning = t('errDupFile');
-          }
-        }
-
-        const isValid = Boolean(title && catNum && !isDuplicateDB && !isDuplicateFile);
-
-        return {
-          ...item,
-          isValid,
-          isDuplicateDB,
-          isDuplicateFile,
-          warningMessage: warning
-        };
+        row.category = rawRow.category || rawRow. زمرہ || rawRow.التصنيف || 'عام';
+        return row;
       };
 
       const processFile = (file) => {
         if (!file) return;
         setFileName(file.name);
-
         const reader = new FileReader();
-        reader.onload = (e) => {
+
+        reader.onload = (evt) => {
           try {
-            const data = new Uint8Array(e.target.result);
-            const workbook = window.XLSX.read(data, { type: 'array' });
+            const data = new Uint8Array(evt.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-            const rawRows = window.XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+            const rawRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
-            if (!rawRows || rawRows.length === 0) {
-              alert(lang === 'ur' ? 'منتخب فائل میں معلومات نہیں ہیں۔' : 'The selected file is empty.');
-              return;
-            }
+            const fileCatNumbers = new Set();
+            const processed = rawRows.map((rawRow, idx) => {
+              const item = mapRawRowToSchema(rawRow);
+              const catNum = String(item.catalogue_number || '').trim();
 
-            const rawMapped = rawRows.map(mapRawRowToBookSchema);
+              let isDuplicate = false;
+              let warningMessage = '';
 
-            const validated = rawMapped.map((item, idx, array) => ({
-              tempId: `row_${Date.now()}_${idx}`,
-              ...validateItem(item, idx, array)
-            }));
+              if (!catNum) {
+                warningMessage = t.missingCatWarning;
+              } else if (!item.title) {
+                warningMessage = t.missingTitleWarning;
+              } else if (existingCatNumbers.has(catNum)) {
+                isDuplicate = true;
+                warningMessage = t.dupWarningDb;
+              } else if (fileCatNumbers.has(catNum)) {
+                isDuplicate = true;
+                warningMessage = t.dupWarningFile;
+              } else {
+                fileCatNumbers.add(catNum);
+              }
 
-            setParsedRows(validated);
+              return {
+                id: `import-row-${idx}`,
+                ...item,
+                isDuplicate,
+                warningMessage,
+                isValid: Boolean(item.title && catNum && !isDuplicate)
+              };
+            });
+
+            setParsedData(processed);
             setImportSummary(null);
-          } catch (err) {
-            console.error('File parsing error:', err);
-            alert(lang === 'ur' ? 'فائل پڑھنے میں خطا پیش آئی ہے۔' : 'Error parsing file.');
+          } catch(err) {
+            alert('File error: ' + err.message);
           }
         };
-
         reader.readAsArrayBuffer(file);
       };
 
-      const handleCellEdit = (index, field, newValue) => {
-        const copy = [...parsedRows];
-        copy[index][field] = newValue;
-
-        const revalidated = copy.map((item, idx, arr) => validateItem(item, idx, arr));
-        setParsedRows(revalidated);
+      const handleCellEdit = (index, field, value) => {
+        const updated = [...parsedData];
+        updated[index][field] = value;
+        const catNum = String(updated[index].catalogue_number || '').trim();
+        const isDup = existingCatNumbers.has(catNum);
+        
+        updated[index].isDuplicate = isDup;
+        updated[index].warningMessage = !catNum ? t.missingCatWarning : !updated[index].title ? t.missingTitleWarning : isDup ? t.dupWarningDb : '';
+        updated[index].isValid = Boolean(updated[index].title && catNum && !isDup);
+        setParsedData(updated);
       };
 
-      const handleRemoveRow = (index) => {
-        const copy = parsedRows.filter((_, i) => i !== index);
-        const revalidated = copy.map((item, idx, arr) => validateItem(item, idx, arr));
-        setParsedRows(revalidated);
-      };
-
-      const handleExecuteImport = () => {
-        const validRecords = parsedRows.filter(r => r.isValid);
-        const failedCount = parsedRows.length - validRecords.length;
+      const handleExecuteSave = () => {
+        const validRecords = parsedData.filter(r => r.isValid);
+        const failedCount = parsedData.length - validRecords.length;
 
         if (validRecords.length === 0) {
-          alert(lang === 'ur' ? 'درآمد کے لیے کوئی درست کتاب موجود نہیں ہے۔' : 'No valid records to import.');
+          alert(lang === 'ur' ? 'درآمد کرنے کے لیے کوئی درست کتاب نہیں ہے۔' : 'No valid records to import.');
           return;
         }
 
-        const cleanToSave = validRecords.map(({ tempId, isValid, isDuplicateDB, isDuplicateFile, warningMessage, ...rest }) => rest);
+        const cleanBooks = validRecords.map(({ id, isDuplicate, warningMessage, isValid, ...rest }) => ({
+          id: 'imp-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+          ...rest
+        }));
 
-        onSaveImportedBooks(cleanToSave);
-
-        setImportSummary({
-          successCount: validRecords.length,
-          skippedCount: failedCount
-        });
-        setParsedRows([]);
+        onSave(cleanBooks);
+        setImportSummary({ success: validRecords.length, failed: failedCount });
+        setParsedData([]);
       };
 
-      const handleDownloadSample = () => {
+      const handleDownloadTemplate = () => {
         const sampleData = [
-          {
-            "Title": "سنن الدارمي",
-            "Author": "الإمام عبد الله بن عبد الرحمن الدارمي",
-            "Serial Number": "SN-2024-051",
-            "Catalogue Number": "UQL-1051",
-            "Alphabetical Section": "س",
-            "Source Page": "ص ٥٠",
-            "Category": "حدیث شریف",
-            "Total Copies": 5,
-            "Available Copies": 4
-          },
-          {
-            "Title": "مشكاة المصابيح",
-            "Author": "الخطيب التبريزي",
-            "Serial Number": "SN-2024-052",
-            "Catalogue Number": "UQL-1052",
-            "Alphabetical Section": "م",
-            "Source Page": "ص ١٢٠",
-            "Category": "حدیث شریف",
-            "Total Copies": 6,
-            "Available Copies": 5
-          },
-          {
-            "Title": "عقیدہ طحاویہ (اردو شرح)",
-            "Author": "مولانا عبدالرحمن صاحب",
-            "Serial Number": "SN-2024-053",
-            "Catalogue Number": "UQL-1053",
-            "Alphabetical Section": "ع",
-            "Source Page": "ص ٨٥",
-            "Category": "علم العقیدہ",
-            "Total Copies": 4,
-            "Available Copies": 3
-          }
+          { "فہرست نمبر": "UQL-2001", "کتاب کا نام": "جامع الترمذي (نمونہ)", "مصنف": "الإمام الترمذي", "سلسلہ نمبر": "SN-2001", "القسم الأبجدي": "ج", "صفحہ نمبر": "1-300", "زمرہ": "الحديث الشريف" },
+          { "فہرست نمبر": "UQL-2002", "کتاب کا نام": "تفسیر الجلالین (نمونہ)", "مصنف": "جلال الدين المحلي والسيوطي", "سلسلہ نمبر": "SN-2002", "القسم الأبجدي": "ت", "صفحہ نمبر": "1-500", "زمرہ": "تفسير القرآن" }
         ];
-
-        const ws = window.XLSX.utils.json_to_sheet(sampleData);
-        const wb = window.XLSX.utils.book_new();
-        window.XLSX.utils.book_append_sheet(wb, ws, "SampleBooks");
-        window.XLSX.writeFile(wb, "اُمّ القریٰ لائبریری - کتابوں کی فہرست.xlsx");
+        const ws = XLSX.utils.json_to_sheet(sampleData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Template");
+        XLSX.writeFile(wb, "اُمّ القریٰ لائبریری - کتابوں کی فہرست.xlsx");
       };
-
-      const visibleRows = useMemo(() => {
-        if (filterMode === 'VALID') return parsedRows.filter(r => r.isValid);
-        if (filterMode === 'ERRORS') return parsedRows.filter(r => !r.isValid);
-        return parsedRows;
-      }, [parsedRows, filterMode]);
 
       return (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-          <div className="bg-white rounded-2xl w-full max-w-6xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
-            
-            {/* Header */}
-            <div className="bg-gradient-to-r from-library-950 to-slate-900 text-white p-5 flex items-center justify-between border-b border-gold-500/30">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-library-700 flex items-center justify-center text-xl text-gold-300 shadow">
-                  <i className="fa-solid fa-file-excel"></i>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-gold-300">
-                    {t('bulkModalTitle')}
-                  </h3>
-                  <p className="text-xs text-library-100">{t('bulkModalSubtitle')}</p>
-                </div>
+        <div className="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full p-6 space-y-6 max-h-[90vh] flex flex-col text-right rtl:text-right ltr:text-left">
+            <div className="flex justify-between items-center border-b pb-4 border-slate-200">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">{t.importTitle}</h3>
+                <p className="text-xs text-slate-500 mt-1">{t.importSubtitle}</p>
               </div>
-
-              <button
-                onClick={onClose}
-                className="text-slate-400 hover:text-white p-2 text-lg transition"
-              >
-                <i className="fa-solid fa-xmark"></i>
-              </button>
+              <button onClick={onClose} className="text-slate-400 hover:text-slate-600 text-xl font-bold px-2 py-1">✕</button>
             </div>
 
-            {/* Body */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1">
-              
-              {/* Dropzone */}
-              <div
-                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setIsDragging(false);
-                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    processFile(e.dataTransfer.files[0]);
-                  }
-                }}
-                className={`border-2 border-dashed rounded-2xl p-6 text-center transition ${
-                  isDragging ? 'border-gold-500 bg-gold-50/50' : 'border-slate-300 bg-slate-50 hover:bg-slate-100/70'
-                }`}
-              >
-                <input
-                  type="file"
-                  accept=".csv, .xlsx, .xls"
-                  onChange={(e) => processFile(e.target.files[0])}
-                  id="bulk-file-input"
-                  className="hidden"
-                />
-
-                <div className="space-y-3">
-                  <div className="w-14 h-14 mx-auto rounded-full bg-library-100 text-library-900 flex items-center justify-center text-2xl shadow-inner">
-                    <i className="fa-solid fa-cloud-arrow-up"></i>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="bulk-file-input"
-                      className="cursor-pointer font-bold text-library-900 hover:text-library-950 underline text-sm"
-                    >
-                      {t('dropzoneClick')}
-                    </label>
-                    <span className="text-xs text-slate-500 me-1"> {t('dropzoneOr')}</span>
-                  </div>
-                  <p className="text-xs text-slate-500">{t('supportedFormats')}</p>
-
-                  <div className="pt-2">
-                    <button
-                      onClick={handleDownloadSample}
-                      type="button"
-                      className="inline-flex items-center gap-1.5 text-xs text-gold-950 bg-gold-100 hover:bg-gold-300 px-3.5 py-2 rounded-lg font-bold transition border border-gold-300"
-                    >
-                      <i className="fa-solid fa-download"></i>
-                      <span>{t('downloadSampleBtn')}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {fileName && (
-                  <div className="mt-4 inline-flex items-center gap-2 bg-library-50 text-library-900 text-xs px-4 py-1.5 rounded-full border border-library-300 font-bold">
-                    <i className="fa-solid fa-file-csv"></i>
-                    <span>{t('selectedFileLabel')} {fileName}</span>
-                  </div>
-                )}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <button onClick={handleDownloadTemplate} className="bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bold px-4 py-2 rounded-xl text-xs">
+                  {t.btnDownloadTemplate}
+                </button>
+                {fileName && <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-md border border-emerald-200">📄 {fileName}</span>}
               </div>
 
-              {/* Summary Alert */}
-              {importSummary && (
-                <div className="bg-library-50 border border-library-300 rounded-xl p-5 text-library-950 space-y-2">
-                  <div className="flex items-center gap-2 font-bold text-base">
-                    <i className="fa-solid fa-circle-check text-library-800 text-xl"></i>
-                    <span>{t('importCompletedTitle')}</span>
-                  </div>
-                  <div className="text-xs space-y-1 pr-7 font-bold">
-                    <p>{t('savedCountLabel')} <strong>{importSummary.successCount}</strong></p>
-                    {importSummary.skippedCount > 0 && (
-                      <p className="text-amber-800">{t('skippedCountLabel')} <strong>{importSummary.skippedCount}</strong></p>
-                    )}
-                  </div>
+              <div onClick={() => fileInputRef.current.click()} className="border-2 border-dashed border-emerald-600/40 bg-emerald-50/50 hover:bg-emerald-50 rounded-2xl p-6 text-center cursor-pointer">
+                <input type="file" ref={fileInputRef} onChange={(e) => processFile(e.target.files[0])} accept=".csv, .xlsx, .xls" className="hidden" />
+                <div className="text-3xl mb-2">📂</div>
+                <h4 className="font-bold text-emerald-950 text-base">{t.importDropzoneText}</h4>
+                <p className="text-xs text-slate-500 mt-1">{t.importDropzoneHint}</p>
+              </div>
+            </div>
+
+            {importSummary && (
+              <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl space-y-1">
+                <h4 className="font-bold text-emerald-900 text-sm">{t.importSuccessSummary}</h4>
+                <p className="text-xs text-emerald-800">
+                  {t.importSuccessCount} <strong>{importSummary.success}</strong> | {t.importFailCount} <strong>{importSummary.failed}</strong>
+                </p>
+              </div>
+            )}
+
+            {parsedData.length > 0 && (
+              <div className="flex-grow overflow-hidden flex flex-col space-y-3">
+                <div className="flex justify-between items-center">
+                  <h4 className="font-bold text-slate-800 text-sm">{t.importPreviewTitle} ({parsedData.length} records)</h4>
+                  <button onClick={handleExecuteSave} className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs shadow">
+                    💾 {t.btnExecuteImport}
+                  </button>
                 </div>
-              )}
 
-              {/* Preview Table */}
-              {parsedRows.length > 0 && (
-                <div className="space-y-4">
-                  
-                  {/* Controls */}
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-100 p-3 rounded-xl border border-slate-200">
-                    <div className="flex items-center gap-2 text-xs">
-                      <button
-                        onClick={() => setFilterMode('ALL')}
-                        className={`px-3 py-1 rounded-lg transition font-bold ${
-                          filterMode === 'ALL' ? 'bg-slate-800 text-white' : 'bg-white text-slate-700 hover:bg-slate-200'
-                        }`}
-                      >
-                        {t('filterAllRows')} ({parsedRows.length})
-                      </button>
-                      <button
-                        onClick={() => setFilterMode('VALID')}
-                        className={`px-3 py-1 rounded-lg transition font-bold ${
-                          filterMode === 'VALID' ? 'bg-library-800 text-white' : 'bg-white text-library-800 hover:bg-slate-200'
-                        }`}
-                      >
-                        {t('filterValidRows')} ({parsedRows.filter(r => r.isValid).length})
-                      </button>
-                      <button
-                        onClick={() => setFilterMode('ERRORS')}
-                        className={`px-3 py-1 rounded-lg transition font-bold ${
-                          filterMode === 'ERRORS' ? 'bg-red-700 text-white' : 'bg-white text-red-700 hover:bg-slate-200'
-                        }`}
-                      >
-                        {t('filterErrorRows')} ({parsedRows.filter(r => !r.isValid).length})
-                      </button>
-                    </div>
-
-                    <button
-                      onClick={handleExecuteImport}
-                      className="bg-library-800 hover:bg-library-900 text-white text-xs font-bold px-5 py-2.5 rounded-lg shadow transition flex items-center gap-2"
-                    >
-                      <i className="fa-solid fa-cloud-arrow-down"></i>
-                      <span>{t('saveValidBtn')} ({parsedRows.filter(r => r.isValid).length})</span>
-                    </button>
-                  </div>
-
-                  {/* Table */}
-                  <div className="border border-slate-200 rounded-xl overflow-x-auto max-h-96">
-                    <table className="w-full text-xs ltr:text-left rtl:text-right">
-                      <thead className="bg-slate-800 text-white sticky top-0 z-10 font-bold">
-                        <tr>
-                          <th className="p-3">{t('colStatus')}</th>
-                          <th className="p-3">{t('colTitle')}</th>
-                          <th className="p-3">{t('colAuthor')}</th>
-                          <th className="p-3">{t('colSerialNo')}</th>
-                          <th className="p-3">{t('colCatNo')}</th>
-                          <th className="p-3">{t('colSection')}</th>
-                          <th className="p-3">{t('colSourcePage')}</th>
-                          <th className="p-3 text-center">{t('colActions')}</th>
+                <div className="overflow-x-auto overflow-y-auto max-h-64 border border-slate-200 rounded-xl">
+                  <table className="w-full text-right rtl:text-right ltr:text-left text-xs border-collapse">
+                    <thead className="sticky top-0 bg-slate-100 font-bold text-slate-700 border-b">
+                      <tr>
+                        <th className="p-2.5">Status</th>
+                        <th className="p-2.5">{t.headerMapCat}</th>
+                        <th className="p-2.5">{t.headerMapTitle}</th>
+                        <th className="p-2.5">{t.headerMapAuthor}</th>
+                        <th className="p-2.5">{t.headerMapSerial}</th>
+                        <th className="p-2.5">{t.headerMapSection}</th>
+                        <th className="p-2.5">{t.headerMapPage}</th>
+                        <th className="p-2.5 text-center">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200">
+                      {parsedData.map((row, idx) => (
+                        <tr key={row.id} className={row.isDuplicate ? 'bg-rose-50' : !row.isValid ? 'bg-amber-50' : 'bg-white'}>
+                          <td className="p-2 font-semibold">
+                            {row.isValid ? <span className="text-emerald-700 font-bold">{t.importReadyRecords}</span> : <span className="text-rose-600 font-bold text-[11px]">{row.warningMessage}</span>}
+                          </td>
+                          <td className="p-1"><input type="text" value={row.catalogue_number} onChange={(e) => handleCellEdit(idx, 'catalogue_number', e.target.value)} className="w-full px-2 py-1 bg-white border border-slate-300 rounded font-mono text-xs" /></td>
+                          <td className="p-1"><input type="text" value={row.title} onChange={(e) => handleCellEdit(idx, 'title', e.target.value)} className="w-full px-2 py-1 bg-white border border-slate-300 rounded font-arabic text-xs" /></td>
+                          <td className="p-1"><input type="text" value={row.author} onChange={(e) => handleCellEdit(idx, 'author', e.target.value)} className="w-full px-2 py-1 bg-white border border-slate-300 rounded font-arabic text-xs" /></td>
+                          <td className="p-1"><input type="text" value={row.serial_number} onChange={(e) => handleCellEdit(idx, 'serial_number', e.target.value)} className="w-full px-2 py-1 bg-white border border-slate-300 rounded text-xs" /></td>
+                          <td className="p-1"><input type="text" value={row.alphabetical_section} onChange={(e) => handleCellEdit(idx, 'alphabetical_section', e.target.value)} className="w-full px-2 py-1 bg-white border border-slate-300 rounded text-xs" /></td>
+                          <td className="p-1"><input type="text" value={row.source_page} onChange={(e) => handleCellEdit(idx, 'source_page', e.target.value)} className="w-full px-2 py-1 bg-white border border-slate-300 rounded text-xs" /></td>
+                          <td className="p-1 text-center">
+                            <button onClick={() => setParsedData(prev => prev.filter((_, i) => i !== idx))} className="bg-rose-600 text-white px-2 py-1 rounded text-[11px]">🗑️</button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-200 bg-white">
-                        {visibleRows.length === 0 ? (
-                          <tr>
-                            <td colSpan="8" className="p-6 text-center text-slate-400">
-                              {t('noRowsInFilter')}
-                            </td>
-                          </tr>
-                        ) : (
-                          visibleRows.map((row) => {
-                            const realIndex = parsedRows.findIndex(r => r.tempId === row.tempId);
-                            return (
-                              <tr
-                                key={row.tempId}
-                                className={
-                                  row.isDuplicateDB || row.isDuplicateFile
-                                    ? 'bg-red-50/80 hover:bg-red-100/60'
-                                    : !row.isValid
-                                    ? 'bg-amber-50/80 hover:bg-amber-100/60'
-                                    : 'hover:bg-slate-50'
-                                }
-                              >
-                                <td className="p-2 min-w-[170px]">
-                                  {row.isValid ? (
-                                    <span className="inline-flex items-center gap-1 bg-library-100 text-library-950 font-bold px-2 py-0.5 rounded text-[11px]">
-                                      <i className="fa-solid fa-check"></i> {t('statusReady')}
-                                    </span>
-                                  ) : (
-                                    <span className="inline-flex items-center gap-1 bg-red-100 text-red-900 font-bold px-2 py-0.5 rounded text-[11px]" title={row.warningMessage}>
-                                      {row.warningMessage}
-                                    </span>
-                                  )}
-                                </td>
-
-                                <td className="p-1.5">
-                                  <input
-                                    type="text"
-                                    value={row.title}
-                                    onChange={(e) => handleCellEdit(realIndex, 'title', e.target.value)}
-                                    className="w-full p-1.5 border border-slate-300 rounded text-xs font-bold font-arabic-title"
-                                  />
-                                </td>
-
-                                <td className="p-1.5">
-                                  <input
-                                    type="text"
-                                    value={row.author}
-                                    onChange={(e) => handleCellEdit(realIndex, 'author', e.target.value)}
-                                    className="w-full p-1.5 border border-slate-300 rounded text-xs"
-                                  />
-                                </td>
-
-                                <td className="p-1.5">
-                                  <input
-                                    type="text"
-                                    value={row.serial_number}
-                                    onChange={(e) => handleCellEdit(realIndex, 'serial_number', e.target.value)}
-                                    className="w-full p-1.5 border border-slate-300 rounded text-xs font-mono"
-                                  />
-                                </td>
-
-                                <td className="p-1.5">
-                                  <input
-                                    type="text"
-                                    value={row.catalogue_number}
-                                    onChange={(e) => handleCellEdit(realIndex, 'catalogue_number', e.target.value)}
-                                    className={`w-full p-1.5 border rounded text-xs font-mono font-bold ${
-                                      row.isDuplicateDB || row.isDuplicateFile ? 'border-red-500 bg-red-50 text-red-900' : 'border-slate-300'
-                                    }`}
-                                  />
-                                </td>
-
-                                <td className="p-1.5 w-20">
-                                  <input
-                                    type="text"
-                                    value={row.alphabetical_section}
-                                    onChange={(e) => handleCellEdit(realIndex, 'alphabetical_section', e.target.value)}
-                                    className="w-full p-1.5 border border-slate-300 rounded text-xs text-center font-bold"
-                                  />
-                                </td>
-
-                                <td className="p-1.5 w-24">
-                                  <input
-                                    type="text"
-                                    value={row.source_page}
-                                    onChange={(e) => handleCellEdit(realIndex, 'source_page', e.target.value)}
-                                    className="w-full p-1.5 border border-slate-300 rounded text-xs text-center"
-                                  />
-                                </td>
-
-                                <td className="p-1.5 text-center">
-                                  <button
-                                    onClick={() => handleRemoveRow(realIndex)}
-                                    className="text-red-600 hover:text-red-800 p-1 rounded"
-                                    title={t('deleteTooltip')}
-                                  >
-                                    <i className="fa-solid fa-trash-can"></i>
-                                  </button>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              )}
+              </div>
+            )}
 
+            <div className="flex justify-end pt-3 border-t border-slate-200">
+              <button onClick={onClose} className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-4 py-2 rounded-xl text-xs">{t.btnClose}</button>
             </div>
-
-            {/* Footer */}
-            <div className="bg-slate-100 p-4 border-t border-slate-200 flex justify-between items-center">
-              <span className="text-xs text-slate-600">
-                {t('bulkHelpFooter')}
-              </span>
-              <button
-                onClick={onClose}
-                className="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-5 py-2 rounded-lg transition"
-              >
-                {t('closeBtn')}
-              </button>
-            </div>
-
           </div>
         </div>
       );
     }
 
-    // =========================================================================
-    // ADD / EDIT BOOK MODAL
-    // =========================================================================
-    function AddEditBookModal({ book, onSave, onClose, t }) {
+    function AddEditBookModal({ book, onSave, onClose, t, lang }) {
       const [formData, setFormData] = useState({
-        title: book ? book.title : '',
-        author: book ? book.author : '',
-        serial_number: book ? book.serial_number : 'SN-2024-' + Math.floor(100 + Math.random() * 900),
-        catalogue_number: book ? book.catalogue_number : 'UQL-' + Math.floor(1051 + Math.random() * 500),
-        alphabetical_section: book ? book.alphabetical_section : 'أ',
-        source_page: book ? book.source_page : 'ص ١',
-        category: book ? book.category : 'حدیث شریف',
-        total_copies: book ? book.total_copies : 5,
-        available_copies: book ? book.available_copies : 5
+        catalogue_number: book?.catalogue_number || '',
+        title: book?.title || '',
+        author: book?.author || '',
+        serial_number: book?.serial_number || '',
+        alphabetical_section: book?.alphabetical_section || '',
+        source_page: book?.source_page || '',
+        category: book?.category || 'الحديث الشريف'
       });
 
       const handleSubmit = (e) => {
         e.preventDefault();
         if (!formData.title || !formData.catalogue_number) {
-          alert('Title and Catalogue Number are required.');
+          alert(lang === 'ur' ? 'براہ کرم کتاب کا نام اور فہرست نمبر لازمی درج کریں' : 'Please provide title & catalogue number');
           return;
         }
         onSave(formData);
       };
 
       return (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-200">
-            <h3 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 font-arabic-title">
-              {book ? t('editTitle') : t('addTitle')}
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 text-right rtl:text-right ltr:text-left space-y-4">
+            <h3 className="text-xl font-bold text-slate-900 border-b pb-3 border-slate-200">
+              {book ? t.modalEditTitle : t.modalAddTitle}
             </h3>
 
-            <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+            <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block font-bold text-slate-700 mb-1">{t('fieldTitle')}</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-bold text-slate-900 font-arabic-title"
-                />
+                <label className="block text-xs font-bold text-slate-700 mb-1">{t.tableHeaderCatNo} *</label>
+                <input type="text" required value={formData.catalogue_number} onChange={(e) => setFormData({ ...formData, catalogue_number: e.target.value })} placeholder="e.g. UQL-1051" className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-mono" />
               </div>
-
               <div>
-                <label className="block font-bold text-slate-700 mb-1">{t('fieldAuthor')}</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.author}
-                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm"
-                />
+                <label className="block text-xs font-bold text-slate-700 mb-1">{t.tableHeaderTitle} *</label>
+                <input type="text" required value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-arabic" />
               </div>
-
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">{t.tableHeaderAuthor}</label>
+                <input type="text" value={formData.author} onChange={(e) => setFormData({ ...formData, author: e.target.value })} className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-arabic" />
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">{t('fieldCatNo')}</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.catalogue_number}
-                    onChange={(e) => setFormData({ ...formData, catalogue_number: e.target.value })}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-mono font-bold text-library-900"
-                  />
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{t.tableHeaderSerial}</label>
+                  <input type="text" value={formData.serial_number} onChange={(e) => setFormData({ ...formData, serial_number: e.target.value })} className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm" />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">{t('fieldSerialNo')}</label>
-                  <input
-                    type="text"
-                    value={formData.serial_number}
-                    onChange={(e) => setFormData({ ...formData, serial_number: e.target.value })}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-mono text-slate-600"
-                  />
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{t.tableHeaderSection}</label>
+                  <input type="text" value={formData.alphabetical_section} onChange={(e) => setFormData({ ...formData, alphabetical_section: e.target.value })} className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm" />
                 </div>
               </div>
-
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">{t('fieldSection')}</label>
-                  <input
-                    type="text"
-                    value={formData.alphabetical_section}
-                    onChange={(e) => setFormData({ ...formData, alphabetical_section: e.target.value })}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-center font-bold"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">{t('fieldSourcePage')}</label>
-                  <input
-                    type="text"
-                    value={formData.source_page}
-                    onChange={(e) => setFormData({ ...formData, source_page: e.target.value })}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-center"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">{t('fieldCategory')}</label>
-                  <input
-                    type="text"
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg"
-                  />
-                </div>
-              </div>
-
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">{t('fieldTotalCopies')}</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formData.total_copies}
-                    onChange={(e) => setFormData({ ...formData, total_copies: parseInt(e.target.value) || 1 })}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-center font-bold"
-                  />
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{t.tableHeaderPage}</label>
+                  <input type="text" value={formData.source_page} onChange={(e) => setFormData({ ...formData, source_page: e.target.value })} className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm" />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">{t('fieldAvailableCopies')}</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.available_copies}
-                    onChange={(e) => setFormData({ ...formData, available_copies: parseInt(e.target.value) || 0 })}
-                    className="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg text-center font-bold"
-                  />
+                  <label className="block text-xs font-bold text-slate-700 mb-1">{t.tableHeaderCategory}</label>
+                  <input type="text" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })} className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm" />
                 </div>
               </div>
-
-              <div className="pt-4 flex justify-end gap-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 bg-slate-200 text-slate-700 font-bold rounded-lg hover:bg-slate-300"
-                >
-                  {t('cancelBtn')}
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2 bg-library-800 text-white font-bold rounded-lg hover:bg-library-900"
-                >
-                  {t('saveBtn')}
-                </button>
+              <div className="flex justify-end space-x-2 rtl:space-x-reverse pt-4 border-t border-slate-200">
+                <button type="button" onClick={onClose} className="px-4 py-2 bg-slate-200 text-slate-800 rounded-xl font-bold text-xs">{t.btnCancel}</button>
+                <button type="submit" className="px-4 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow">{t.btnSave}</button>
               </div>
             </form>
           </div>
@@ -1822,74 +1022,37 @@
       );
     }
 
-    // =========================================================================
-    // BOOK DETAIL MODAL
-    // =========================================================================
-    function BookDetailModal({ book, onClose, t }) {
+    function ViewBookDetailsModal({ book, onClose, t, lang }) {
       return (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-lg w-full shadow-2xl border border-slate-200 space-y-4">
-            
-            <div className="flex justify-between items-start border-b border-slate-100 pb-3">
-              <span className="bg-library-100 text-library-950 font-mono font-bold text-xs px-3 py-1 rounded-md">
-                {book.catalogue_number}
-              </span>
-              <button onClick={onClose} className="text-slate-400 hover:text-slate-700 text-lg">
-                <i className="fa-solid fa-xmark"></i>
-              </button>
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 text-right rtl:text-right ltr:text-left space-y-4">
+            <div className="flex justify-between items-center border-b pb-3 border-slate-200">
+              <h3 className="text-lg font-bold text-slate-900">{t.modalDetailTitle}</h3>
+              <span className="bg-emerald-100 text-emerald-900 font-mono font-bold text-xs px-2.5 py-1 rounded-full">{book.catalogue_number}</span>
             </div>
-
-            <div className="space-y-3">
-              <h2 className="text-2xl font-bold font-arabic-title text-slate-900 leading-snug">
-                {book.title}
-              </h2>
-              <p className="text-sm text-slate-600">
-                {t('authorPrefix')} <strong className="text-slate-900">{book.author}</strong>
-              </p>
-
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-2 gap-3 text-xs font-mono">
-                <div>
-                  <span className="text-slate-400 block font-sans">{t('serialPrefix')}</span>
-                  <span className="font-bold text-slate-800">{book.serial_number}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block font-sans">{t('alphabeticalSectionLabel')}</span>
-                  <span className="font-bold text-amber-700">{book.alphabetical_section}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block font-sans">{t('sourcePagePrefix')}</span>
-                  <span className="font-bold text-slate-800">{book.source_page}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block font-sans">{t('subjectLabel')}</span>
-                  <span className="font-bold text-slate-800 font-sans">{book.category || 'عام'}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block font-sans">{t('availableCopiesLabel')}</span>
-                  <span className="font-bold text-library-800">{book.available_copies}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 block font-sans">{t('totalCopiesLabel')}</span>
-                  <span className="font-bold text-slate-800">{book.total_copies}</span>
-                </div>
+            <div className="space-y-3 font-arabic">
+              <div>
+                <span className="text-xs font-bold text-slate-500 block">{t.tableHeaderTitle}</span>
+                <p className="text-xl font-bold text-emerald-950 mt-0.5">{book.title}</p>
+              </div>
+              <div>
+                <span className="text-xs font-bold text-slate-500 block">{t.tableHeaderAuthor}</span>
+                <p className="text-base font-semibold text-slate-800 mt-0.5">{book.author}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100 text-xs">
+                <div><span className="font-bold text-slate-500 block">{t.tableHeaderSerial}</span><p className="font-mono text-slate-800">{book.serial_number || '-'}</p></div>
+                <div><span className="font-bold text-slate-500 block">{t.tableHeaderSection}</span><p className="font-bold text-amber-900">{book.alphabetical_section || '-'}</p></div>
               </div>
             </div>
-
-            <div className="pt-2 text-right rtl:text-left">
-              <button
-                onClick={onClose}
-                className="bg-slate-800 text-white text-xs font-bold px-5 py-2 rounded-lg hover:bg-slate-900"
-              >
-                {t('closeBtn')}
-              </button>
+            <div className="flex justify-end pt-4 border-t border-slate-200">
+              <button onClick={onClose} className="px-4 py-2 bg-emerald-800 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow">{t.btnClose}</button>
             </div>
           </div>
         </div>
       );
     }
 
-    const rootElement = document.getElementById('root');
-    const root = ReactDOM.createRoot(rootElement);
+    const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
   </script>
 </body>
