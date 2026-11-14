@@ -1,0 +1,6 @@
+{
+  "name": "Ummul Qura Library",
+  "description": "Urdu Islamic Library catalog and circulation management system for Ummul Qura Library, Domanpura, Maunath Bhanjan",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
