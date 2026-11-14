@@ -2,8 +2,9 @@
 <html lang="ur" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Çõãø ÇáŞÑí? áÇÆÈÑíÑí | Ummul Qura Library | ãßÊÈÉ Ãã ÇáŞÑì</title>
+  <title>Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ | Ummul Qura Library | Ù…ÙƒØªØ¨Ø© Ø£Ù… Ø§Ù„Ù‚Ø±Ù‰</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,6 +13,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
   <!-- Google Fonts: Amiri, Tajawal, Noto Nastaliq Urdu, Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
   
   <!-- React 18 & ReactDOM -->
@@ -21,7 +24,7 @@
   <!-- Babel Compiler -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  <!-- SheetJS / XLSX for Excel & CSV Parsing -->
+  <!-- SheetJS / XLSX for Excel & CSV Parsing with UTF-8 support -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <script>
@@ -29,7 +32,7 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Tajawal', 'Inter', 'system-ui', 'sans-serif'],
+            sans: ['Tajawal', 'Inter', 'system-ui', 'Tahoma', 'sans-serif'],
             serif: ['Amiri', 'serif'],
             urdu: ['Noto Nastaliq Urdu', 'Tajawal', 'serif']
           },
@@ -57,7 +60,7 @@
 
   <style>
     body {
-      font-family: 'Tajawal', 'Inter', sans-serif;
+      font-family: 'Tajawal', 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #f8fafc;
       color: #1e293b;
       transition: direction 0.25s ease, background-color 0.25s ease;
@@ -89,194 +92,193 @@
 
     // 50 Pre-populated Classical Islamic Library Books (UQL-1001 to UQL-1050)
     const INITIAL_50_BOOKS = [
-      { id: 'b1', catalogue_number: 'UQL-1001', title: 'ÕÍíÍ ÇáÈÎÇÑí', author: 'ÇáÅãÇã ãÍãÏ Èä ÅÓãÇÚíá ÇáÈÎÇÑí', serial_number: 'SN-2024-001', alphabetical_section: 'Ã', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 1', total_copies: 8, available_copies: 6 },
-      { id: 'b2', catalogue_number: 'UQL-1002', title: 'ÕÍíÍ ãÓáã', author: 'ÇáÅãÇã ãÓáã Èä ÇáÍÌÇÌ ÇáŞÔíÑí ÇáäíÓÇÈæÑí', serial_number: 'SN-2024-002', alphabetical_section: 'Õ', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 1', total_copies: 6, available_copies: 4 },
-      { id: 'b3', catalogue_number: 'UQL-1003', title: 'ÊİÓíÑ ÇáŞÑÂä ÇáÚÙíã (ÊİÓíÑ ÇÈä ßËíÑ)', author: 'ÇáÅãÇã ÇáÍÇİÙ ÇÈä ßËíÑ ÇáÏãÔŞí', serial_number: 'SN-2024-003', alphabetical_section: 'Ê', category: 'ÊİÓíÑ ŞÑÂä', source_page: 'Õ 45', total_copies: 10, available_copies: 7 },
-      { id: 'b4', catalogue_number: 'UQL-1004', title: 'İÊÍ ÇáÈÇÑí ÔÑÍ ÕÍíÍ ÇáÈÎÇÑí', author: 'ÇáÍÇİÙ ÇÈä ÍÌÑ ÇáÚÓŞáÇäí', serial_number: 'SN-2024-004', alphabetical_section: 'İ', category: 'ÍÏíË æ ÔÑæÍÇÊ', source_page: 'Õ 112', total_copies: 5, available_copies: 3 },
-      { id: 'b5', catalogue_number: 'UQL-1005', title: 'ÑíÇÖ ÇáÕÇáÍíä ãä ßáÇã ÓíÏ ÇáãÑÓáíä', author: 'ÇáÅãÇã íÍíì Èä ÔÑİ Çáäææí', serial_number: 'SN-2024-005', alphabetical_section: 'Ñ', category: 'ÍÏíË æ ÇÎáÇŞ', source_page: 'Õ 88', total_copies: 12, available_copies: 9 },
-      { id: 'b6', catalogue_number: 'UQL-1006', title: 'ÒÇÏ ÇáãÚÇÏ İí åÏí ÎíÑ ÇáÚÈÇÏ', author: 'ÇáÅãÇã ÇÈä Şíã ÇáÌæÒíÉ', serial_number: 'SN-2024-006', alphabetical_section: 'Ò', category: 'ÓíÑÊ æ İŞå', source_page: 'Õ 205', total_copies: 4, available_copies: 2 },
-      { id: 'b7', catalogue_number: 'UQL-1007', title: 'ãæØÃ ÇáÅãÇã ãÇáß', author: 'ÇáÅãÇã ãÇáß Èä ÃäÓ ÇáÃÕÈÍí', serial_number: 'SN-2024-007', alphabetical_section: 'ã', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 34', total_copies: 7, available_copies: 5 },
-      { id: 'b8', catalogue_number: 'UQL-1008', title: 'ÇáÈÏÇíÉ æÇáäåÇíÉ', author: 'ÇáÍÇİÙ ÇÈä ßËíÑ ÇáÏãÔŞí', serial_number: 'SN-2024-008', alphabetical_section: 'Ç', category: 'ÊÇÑíÎ ÇÓáÇã', source_page: 'Õ 500', total_copies: 6, available_copies: 3 },
-      { id: 'b9', catalogue_number: 'UQL-1009', title: 'ÌÇãÚ ÇáÊÑãĞí (Óää ÇáÊÑãĞí)', author: 'ÇáÅãÇã ãÍãÏ Èä ÚíÓì ÇáÊÑãĞí', serial_number: 'SN-2024-009', alphabetical_section: 'Ì', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 72', total_copies: 8, available_copies: 6 },
-      { id: 'b10', catalogue_number: 'UQL-1010', title: 'Óää ÃÈí ÏÇæÏ', author: 'ÇáÅãÇã ÃÈæ ÏÇæÏ ÇáÓÌÓÊÇäí', serial_number: 'SN-2024-010', alphabetical_section: 'Ó', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 90', total_copies: 6, available_copies: 4 },
-      { id: 'b11', catalogue_number: 'UQL-1011', title: 'Óää ÇáäÓÇÆí (ÇáãÌÊÈì)', author: 'ÇáÅãÇã ÃÍãÏ Èä ÔÚíÈ ÇáäÓÇÆí', serial_number: 'SN-2024-011', alphabetical_section: 'Ó', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 15', total_copies: 5, available_copies: 3 },
-      { id: 'b12', catalogue_number: 'UQL-1012', title: 'Óää ÇÈä ãÇÌå', author: 'ÇáÅãÇã ãÍãÏ Èä ãÇÌå ÇáŞÒæíäí', serial_number: 'SN-2024-012', alphabetical_section: 'Ó', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 30', total_copies: 6, available_copies: 5 },
-      { id: 'b13', catalogue_number: 'UQL-1013', title: 'ÓíÑ ÃÚáÇã ÇáäÈáÇÁ', author: 'ÇáÅãÇã ÔãÓ ÇáÏíä ÇáĞåÈí', serial_number: 'SN-2024-013', alphabetical_section: 'Ó', category: 'ÊÑÇÌã æ ÑÌÇá', source_page: 'Õ 400', total_copies: 4, available_copies: 2 },
-      { id: 'b14', catalogue_number: 'UQL-1014', title: 'ÇáÚŞíÏÉ ÇáØÍÇæíÉ', author: 'ÇáÅãÇã ÃÈæ ÌÚİÑ ÇáØÍÇæí ÇáÍäİí', serial_number: 'SN-2024-014', alphabetical_section: 'Ú', category: 'Úáã ÇáÚŞíÏÀ', source_page: 'Õ 12', total_copies: 15, available_copies: 11 },
-      { id: 'b15', catalogue_number: 'UQL-1015', title: 'ßÊÇÈ ÇáÊæÍíÏ ÇáĞí åæ ÍŞ Çááå Úáì ÇáÚÈíÏ', author: 'ÇáÔíÎ ãÍãÏ Èä ÚÈÏ ÇáæåÇÈ', serial_number: 'SN-2024-015', alphabetical_section: 'ß', category: 'Úáã ÇáÚŞíÏÀ', source_page: 'Õ 5', total_copies: 10, available_copies: 8 },
-      { id: 'b16', catalogue_number: 'UQL-1016', title: 'ÇáÑÍíŞ ÇáãÎÊæã', author: 'ÇáÔíÎ Õİí ÇáÑÍãä ÇáãÈÇÑßİæÑí', serial_number: 'SN-2024-016', alphabetical_section: 'Ç', category: 'ÓíÑÊ ØíÈÀ', source_page: 'Õ 180', total_copies: 9, available_copies: 6 },
-      { id: 'b17', catalogue_number: 'UQL-1017', title: 'ÇáÃÑÈÚæä ÇáäææíÉ', author: 'ÇáÅãÇã ãÍíí ÇáÏíä Çáäææí', serial_number: 'SN-2024-017', alphabetical_section: 'Ç', category: 'ÍÏíË ÔÑíİ', source_page: 'Õ 2', total_copies: 20, available_copies: 16 },
-      { id: 'b18', catalogue_number: 'UQL-1018', title: 'ãÏÇÑÌ ÇáÓÇáßíä Èíä ãäÇÒá ÅíÇß äÚÈÏ æÅíÇß äÓÊÚíä', author: 'ÇáÅãÇã ÇÈä Şíã ÇáÌæÒíÉ', serial_number: 'SN-2024-018', alphabetical_section: 'ã', category: 'ÊÒ˜íå æ ÇÍÓÇä', source_page: 'Õ 310', total_copies: 4, available_copies: 2 },
-      { id: 'b19', catalogue_number: 'UQL-1019', title: 'ÅÍíÇÁ Úáæã ÇáÏíä', author: 'ÇáÅãÇã ÃÈæ ÍÇãÏ ÇáÛÒÇáí', serial_number: 'SN-2024-019', alphabetical_section: 'Ç', category: 'ÇÎáÇŞ æ ÊÒ˜íå', source_page: 'Õ 220', total_copies: 5, available_copies: 3 },
-      { id: 'b20', catalogue_number: 'UQL-1020', title: 'ÇáãÛäí İí İŞå ÇáÅãÇã ÃÍãÏ Èä ÍäÈá', author: 'ãæİŞ ÇáÏíä ÇÈä ŞÏÇãÉ ÇáãŞÏÓí', serial_number: 'SN-2024-020', alphabetical_section: 'Ç', category: 'İŞå ãŞÇÑä', source_page: 'Õ 650', total_copies: 3, available_copies: 1 },
-      { id: 'b21', catalogue_number: 'UQL-1021', title: 'ÊİÓíÑ ÇáÌáÇáíä', author: 'ÌáÇá ÇáÏíä ÇáãÍáí æÌáÇá ÇáÏíä ÇáÓíæØí', serial_number: 'SN-2024-021', alphabetical_section: 'Ê', category: 'ÊİÓíÑ ŞÑÂä', source_page: 'Õ 95', total_copies: 11, available_copies: 8 },
-      { id: 'b22', catalogue_number: 'UQL-1022', title: 'ÊíÓíÑ ÇáßÑíã ÇáÑÍãä İí ÊİÓíÑ ßáÇã ÇáãäÇä', author: 'ÇáÔíÎ ÚÈÏ ÇáÑÍãä Èä äÇÕÑ ÇáÓÚÏí', serial_number: 'SN-2024-022', alphabetical_section: 'Ê', category: 'ÊİÓíÑ ŞÑÂä', source_page: 'Õ 140', total_copies: 8, available_copies: 5 },
-      { id: 'b23', catalogue_number: 'UQL-1023', title: 'ÓíÑÊ ÓÑæÑ ÚÇáã (ÇÑÏæ)', author: 'ãæáÇäÇ ÓíÏ ÇÈæÇáÇÚáí ãæÏæÏí', serial_number: 'SN-2024-023', alphabetical_section: 'Ó', category: 'ÓíÑÊ ÇÑÏæ', source_page: 'Õ 250', total_copies: 7, available_copies: 4 },
-      { id: 'b24', catalogue_number: 'UQL-1024', title: 'ÈÀÔÊí ÒíæÑ (ÇÑÏæ)', author: 'ãæáÇäÇ ãÌÏÏ ÇáãáÊ ÇÔÑİ Úáí ÊªÇäæí', serial_number: 'SN-2024-024', alphabetical_section: 'È', category: 'İŞÀ Íäİí ÇÑÏæ', source_page: 'Õ 115', total_copies: 10, available_copies: 7 },
-      { id: 'b25', catalogue_number: 'UQL-1025', title: 'ãÚÇÑİ ÇáŞÑÂä (ÇÑÏæ)', author: 'ãİÊí ÇÚÙã ãÍãÏ ÔİíÚ ÚËãÇäí', serial_number: 'SN-2024-025', alphabetical_section: 'ã', category: 'ÊİÓíÑ ÇÑÏæ', source_page: 'Õ 380', total_copies: 6, available_copies: 3 },
-      { id: 'b26', catalogue_number: 'UQL-1026', title: 'ãÌãæÚ İÊÇæì ÔíÎ ÇáÅÓáÇã ÇÈä ÊíãíÉ', author: 'ÔíÎ ÇáÅÓáÇã ÊŞí ÇáÏíä ÇÈä ÊíãíÉ', serial_number: 'SN-2024-026', alphabetical_section: 'ã', category: 'İÊÇæì æ ÚŞíÏÉ', source_page: 'Õ 780', total_copies: 4, available_copies: 2 },
-      { id: 'b27', catalogue_number: 'UQL-1027', title: 'ÇáãÍáì ÈÇáÂËÇÑ', author: 'ÇáÅãÇã Úáí Èä ÃÍãÏ Èä ÍÒã ÇáÃäÏáÓí', serial_number: 'SN-2024-027', alphabetical_section: 'Ç', category: 'İŞå ÙÇåÑ', source_page: 'Õ 420', total_copies: 3, available_copies: 1 },
-      { id: 'b28', catalogue_number: 'UQL-1028', title: 'ÇáÑÓÇáÉ İí ÃÕæá ÇáİŞå', author: 'ÇáÅãÇã ãÍãÏ Èä ÅÏÑíÓ ÇáÔÇİÚí', serial_number: 'SN-2024-028', alphabetical_section: 'Ç', category: 'ÃÕæá ÇáİŞå', source_page: 'Õ 55', total_copies: 6, available_copies: 4 },
-      { id: 'b29', catalogue_number: 'UQL-1029', title: 'áÓÇä ÇáÚÑÈ', author: 'ÇáÚáÇãÉ ÇÈä ãäÙæÑ ÇáÃİÑíŞí', serial_number: 'SN-2024-029', alphabetical_section: 'á', category: 'áÛÊ æ ÇÏÈ', source_page: 'Õ 900', total_copies: 4, available_copies: 2 },
-      { id: 'b30', catalogue_number: 'UQL-1030', title: 'ÑÏ ÇáãÍÊÇÑ Úáì ÇáÏÑ ÇáãÎÊÇÑ (İÊÇæí ÔÇãí)', author: 'ÇáÚáÇãÉ ÇÈä ÚÇÈÏíä ÇáÔÇãí', serial_number: 'SN-2024-030', alphabetical_section: 'Ñ', category: 'İŞÀ Íäİí', source_page: 'Õ 600', total_copies: 5, available_copies: 3 },
-      { id: 'b31', catalogue_number: 'UQL-1031', title: 'ãŞÏãÉ ÇÈä ÎáÏæä', author: 'ÇáÚáÇãÉ ÚÈÏ ÇáÑÍãä Èä ÎáÏæä', serial_number: 'SN-2024-031', alphabetical_section: 'ã', category: 'ÊÇÑíÎ æ ÚãÑÇä', source_page: 'Õ 330', total_copies: 8, available_copies: 5 },
-      { id: 'b32', catalogue_number: 'UQL-1032', title: 'ÌÇãÚ ÇáÚáæã æÇáÍßã', author: 'ÇáÍÇİÙ Òíä ÇáÏíä ÇÈä ÑÌÈ ÇáÍäÈáí', serial_number: 'SN-2024-032', alphabetical_section: 'Ì', category: 'ÍÏíË æ ÔÑæÍÇÊ', source_page: 'Õ 175', total_copies: 6, available_copies: 4 },
-      { id: 'b33', catalogue_number: 'UQL-1033', title: 'ÕİÉ ÕáÇÉ ÇáäÈí Õáì Çááå Úáíå æÓáã', author: 'ÇáÔíÎ ãÍãÏ äÇÕÑ ÇáÏíä ÇáÃáÈÇäí', serial_number: 'SN-2024-033', alphabetical_section: 'Õ', category: 'İŞå æ ÍÏíË', source_page: 'Õ 48', total_copies: 12, available_copies: 9 },
-      { id: 'b34', catalogue_number: 'UQL-1034', title: 'İŞå ÇáÓäÉ', author: 'ÇáÔíÎ ÇáÓíÏ ÓÇÈŞ', serial_number: 'SN-2024-034', alphabetical_section: 'İ', category: 'İŞå ãíÓÑ', source_page: 'Õ 290', total_copies: 7, available_copies: 5 },
-      { id: 'b35', catalogue_number: 'UQL-1035', title: 'äíá ÇáÃæØÇÑ ãä ÃÓÑÇÑ ãäÊŞì ÇáÃÎÈÇÑ', author: 'ÇáÅãÇã ãÍãÏ Èä Úáí ÇáÔæßÇäí', serial_number: 'SN-2024-035', alphabetical_section: 'ä', category: 'ÃÍÇÏíË ÇáÃÍßÇã', source_page: 'Õ 510', total_copies: 4, available_copies: 2 },
-      { id: 'b36', catalogue_number: 'UQL-1036', title: 'ÇáãäåÇÌ ÔÑÍ ÕÍíÍ ãÓáã Èä ÇáÍÌÇÌ', author: 'ÇáÅãÇã íÍíì Èä ÔÑİ Çáäææí', serial_number: 'SN-2024-036', alphabetical_section: 'Ç', category: 'ÍÏíË æ ÔÑæÍÇÊ', source_page: 'Õ 340', total_copies: 5, available_copies: 3 },
-      { id: 'b37', catalogue_number: 'UQL-1037', title: '˜Ôİ ÇáãÍÌæÈ (ÇÑÏæ)', author: 'ÍÖÑÊ Úáí Èä ÚËãÇä ÀÌæíÑí (ÏÇÊÇ äÌ ÈÎÔ)', serial_number: 'SN-2024-037', alphabetical_section: '˜', category: 'ÊÕæİ æ Óáæ˜', source_page: 'Õ 180', total_copies: 6, available_copies: 4 },
-      { id: 'b38', catalogue_number: 'UQL-1038', title: 'ÊİÀíã ÇáŞÑÂä (ÇÑÏæ)', author: 'ãæáÇäÇ ÓíÏ ÇÈæÇáÇÚáí ãæÏæÏí', serial_number: 'SN-2024-038', alphabetical_section: 'Ê', category: 'ÊİÓíÑ ÇÑÏæ', source_page: 'Õ 750', total_copies: 9, available_copies: 6 },
-      { id: 'b39', catalogue_number: 'UQL-1039', title: 'ÔÑÍ ÇáÓäÉ', author: 'ÇáÅãÇã ÇáÍÓíä Èä ãÓÚæÏ ÇáÈÛæí', serial_number: 'SN-2024-039', alphabetical_section: 'Ô', category: 'ÍÏíË æ İŞå', source_page: 'Õ 210', total_copies: 4, available_copies: 2 },
-      { id: 'b40', catalogue_number: 'UQL-1040', title: 'ÇáÃÔÈÇå æÇáäÙÇÆÑ İí ŞæÇÚÏ ÇáİŞå', author: 'ÇáÌáÇá ÚÈÏ ÇáÑÍãä ÇáÓíæØí', serial_number: 'SN-2024-040', alphabetical_section: 'Ç', category: 'ŞæÇÚÏ İŞåíÉ', source_page: 'Õ 160', total_copies: 5, available_copies: 3 },
-      { id: 'b41', catalogue_number: 'UQL-1041', title: 'ŞæÇÚÏ ÇáÃÍßÇã İí ãÕÇáÍ ÇáÃäÇã', author: 'ÇáÚÒ Èä ÚÈÏ ÇáÓáÇã ÇáÓáãí', serial_number: 'SN-2024-041', alphabetical_section: 'Ş', category: 'ŞæÇÚÏ æ ÃÕæá', source_page: 'Õ 195', total_copies: 4, available_copies: 2 },
-      { id: 'b42', catalogue_number: 'UQL-1042', title: 'İÊÇæì ÚÇáãíÑí (ÇáİÊæì ÇáåäÏíÉ - ÇÑÏæ)', author: 'ÌãÇÚÉ ãä ÚáãÇÁ ÇáåäÏ ÈÅÔÑÇİ ÃæÑäßÒíÈ ÚÇáã˜íÑ', serial_number: 'SN-2024-042', alphabetical_section: 'İ', category: 'İŞÀ Íäİí', source_page: 'Õ 850', total_copies: 7, available_copies: 4 },
-      { id: 'b43', catalogue_number: 'UQL-1043', title: 'ŞÕÕ ÇáÃäÈíÇÁ', author: 'ÇáÍÇİÙ ÇÈä ßËíÑ ÇáÏãÔŞí', serial_number: 'SN-2024-043', alphabetical_section: 'Ş', category: 'ŞÕÕ æ ÊÇÑíÎ', source_page: 'Õ 270', total_copies: 11, available_copies: 8 },
-      { id: 'b44', catalogue_number: 'UQL-1044', title: 'ÇáÔİÇÁ ÈÊÚÑíİ ÍŞæŞ ÇáãÕØİì', author: 'ÇáŞÇÖí ÃÈæ ÇáİÖá ÚíÇÖ ÇáíÍÕÈí', serial_number: 'SN-2024-044', alphabetical_section: 'Ç', category: 'ÔãÇÆá æ ÓíÑÊ', source_page: 'Õ 350', total_copies: 8, available_copies: 5 },
-      { id: 'b45', catalogue_number: 'UQL-1045', title: 'ÃÏÈ ÇáÏäíÇ æÇáÏíä', author: 'ÇáÅãÇã ÃÈæ ÇáÍÓä Úáí Èä ãÍãÏ ÇáãÇæÑÏí', serial_number: 'SN-2024-045', alphabetical_section: 'Ç', category: 'ÃÎáÇŞ æ ÂÏÇÈ', source_page: 'Õ 240', total_copies: 6, available_copies: 4 },
-      { id: 'b46', catalogue_number: 'UQL-1046', title: 'ÅÚáÇã ÇáãæŞÚíä Úä ÑÈ ÇáÚÇáãíä', author: 'ÇáÅãÇã ÔãÓ ÇáÏíä ÇÈä Şíã ÇáÌæÒíÉ', serial_number: 'SN-2024-046', alphabetical_section: 'Ç', category: 'ÃÕæá æ İÊÇæì', source_page: 'Õ 560', total_copies: 4, available_copies: 2 },
-      { id: 'b47', catalogue_number: 'UQL-1047', title: 'İÊÍ ÇáãÌíÏ ÔÑÍ ßÊÇÈ ÇáÊæÍíÏ', author: 'ÇáÔíÎ ÚÈÏ ÇáÑÍãä Èä ÍÓä Âá ÇáÔíÎ', serial_number: 'SN-2024-047', alphabetical_section: 'İ', category: 'ÊæÍíÏ æ ÚŞíÏÉ', source_page: 'Õ 215', total_copies: 7, available_copies: 5 },
-      { id: 'b48', catalogue_number: 'UQL-1048', title: 'ÊÇÑíÎ ØÈÑí (ÊÇÑíÎ ÇáÃãã æÇáãáæß)', author: 'ÇáÅãÇã ãÍãÏ Èä ÌÑíÑ ÇáØÈÑí', serial_number: 'SN-2024-048', alphabetical_section: 'Ê', category: 'ÊÇÑíÎ ÇÓáÇã', source_page: 'Õ 920', total_copies: 5, available_copies: 3 },
-      { id: 'b49', catalogue_number: 'UQL-1049', title: 'ÌÇãÚ ÇáÈíÇä Úä ÊÃæíá Ãí ÇáŞÑÂä (ÊİÓíÑ ÇáØÈÑí)', author: 'ÇáÅãÇã ãÍãÏ Èä ÌÑíÑ ÇáØÈÑí', serial_number: 'SN-2024-049', alphabetical_section: 'Ê', category: 'ÊİÓíÑ ãÃËæÑ', source_page: 'Õ 950', total_copies: 6, available_copies: 3 },
-      { id: 'b50', catalogue_number: 'UQL-1050', title: 'ÓíÑÊ ÇáäÈí Õáì ÇááÀ ÚáíÀ æÓáã (ÇÑÏæ)', author: 'ÚáÇãÀ ÔÈáí äÚãÇäí æ ÓíÏ ÓáíãÇä äÏæí', serial_number: 'SN-2024-050', alphabetical_section: 'Ó', category: 'ÓíÑÊ ÇÑÏæ', source_page: 'Õ 620', total_copies: 9, available_copies: 6 }
+      { id: 'b1', catalogue_number: 'UQL-1001', title: 'ØµØ­ÙŠØ­ Ø§Ù„Ø¨Ø®Ø§Ø±ÙŠ', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­Ù…Ø¯ Ø¨Ù† Ø¥Ø³Ù…Ø§Ø¹ÙŠÙ„ Ø§Ù„Ø¨Ø®Ø§Ø±ÙŠ', serial_number: 'SN-2024-001', alphabetical_section: 'Ø£', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù¡', total_copies: 8, available_copies: 6 },
+      { id: 'b2', catalogue_number: 'UQL-1002', title: 'ØµØ­ÙŠØ­ Ù…Ø³Ù„Ù…', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø³Ù„Ù… Ø¨Ù† Ø§Ù„Ø­Ø¬Ø§Ø¬ Ø§Ù„Ù‚Ø´ÙŠØ±ÙŠ Ø§Ù„Ù†ÙŠØ³Ø§Ø¨ÙˆØ±ÙŠ', serial_number: 'SN-2024-002', alphabetical_section: 'Øµ', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù¡', total_copies: 6, available_copies: 4 },
+      { id: 'b3', catalogue_number: 'UQL-1003', title: 'ØªÙØ³ÙŠØ± Ø§Ù„Ù‚Ø±Ø¢Ù† Ø§Ù„Ø¹Ø¸ÙŠÙ… (ØªÙØ³ÙŠØ± Ø§Ø¨Ù† ÙƒØ«ÙŠØ±)', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø§Ù„Ø­Ø§ÙØ¸ Ø§Ø¨Ù† ÙƒØ«ÙŠØ± Ø§Ù„Ø¯Ù…Ø´Ù‚ÙŠ', serial_number: 'SN-2024-003', alphabetical_section: 'Øª', category: 'ØªÙØ³ÛŒØ± Ù‚Ø±Ø¢Ù†', source_page: 'Øµ Ù¤Ù¥', total_copies: 10, available_copies: 7 },
+      { id: 'b4', catalogue_number: 'UQL-1004', title: 'ÙØªØ­ Ø§Ù„Ø¨Ø§Ø±ÙŠ Ø´Ø±Ø­ ØµØ­ÙŠØ­ Ø§Ù„Ø¨Ø®Ø§Ø±ÙŠ', author: 'Ø§Ù„Ø­Ø§ÙØ¸ Ø§Ø¨Ù† Ø­Ø¬Ø± Ø§Ù„Ø¹Ø³Ù‚Ù„Ø§Ù†ÙŠ', serial_number: 'SN-2024-004', alphabetical_section: 'Ù', category: 'Ø­Ø¯ÛŒØ« Ùˆ Ø´Ø±ÙˆØ­Ø§Øª', source_page: 'Øµ Ù¡Ù¡Ù¢', total_copies: 5, available_copies: 3 },
+      { id: 'b5', catalogue_number: 'UQL-1005', title: 'Ø±ÙŠØ§Ø¶ Ø§Ù„ØµØ§Ù„Ø­ÙŠÙ† Ù…Ù† ÙƒÙ„Ø§Ù… Ø³ÙŠØ¯ Ø§Ù„Ù…Ø±Ø³Ù„ÙŠÙ†', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… ÙŠØ­ÙŠÙ‰ Ø¨Ù† Ø´Ø±Ù Ø§Ù„Ù†ÙˆÙˆÙŠ', serial_number: 'SN-2024-005', alphabetical_section: 'Ø±', category: 'Ø­Ø¯ÛŒØ« Ùˆ Ø§Ø®Ù„Ø§Ù‚', source_page: 'Øµ Ù¨Ù¨', total_copies: 12, available_copies: 9 },
+      { id: 'b6', catalogue_number: 'UQL-1006', title: 'Ø²Ø§Ø¯ Ø§Ù„Ù…Ø¹Ø§Ø¯ ÙÙŠ Ù‡Ø¯ÙŠ Ø®ÙŠØ± Ø§Ù„Ø¹Ø¨Ø§Ø¯', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø§Ø¨Ù† Ù‚ÙŠÙ… Ø§Ù„Ø¬ÙˆØ²ÙŠØ©', serial_number: 'SN-2024-006', alphabetical_section: 'Ø²', category: 'Ø³ÛŒØ±Øª Ùˆ ÙÙ‚Ù‡', source_page: 'Øµ Ù¢Ù Ù¥', total_copies: 4, available_copies: 2 },
+      { id: 'b7', catalogue_number: 'UQL-1007', title: 'Ù…ÙˆØ·Ø£ Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø§Ù„Ùƒ', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø§Ù„Ùƒ Ø¨Ù† Ø£Ù†Ø³ Ø§Ù„Ø£ØµØ¨Ø­ÙŠ', serial_number: 'SN-2024-007', alphabetical_section: 'Ù…', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù£Ù¤', total_copies: 7, available_copies: 5 },
+      { id: 'b8', catalogue_number: 'UQL-1008', title: 'Ø§Ù„Ø¨Ø¯Ø§ÙŠØ© ÙˆØ§Ù„Ù†Ù‡Ø§ÙŠØ©', author: 'Ø§Ù„Ø­Ø§ÙØ¸ Ø§Ø¨Ù† ÙƒØ«ÙŠØ± Ø§Ù„Ø¯Ù…Ø´Ù‚ÙŠ', serial_number: 'SN-2024-008', alphabetical_section: 'Ø§', category: 'ØªØ§Ø±ÛŒØ® Ø§Ø³Ù„Ø§Ù…', source_page: 'Øµ Ù¥Ù Ù ', total_copies: 6, available_copies: 3 },
+      { id: 'b9', catalogue_number: 'UQL-1009', title: 'Ø¬Ø§Ù…Ø¹ Ø§Ù„ØªØ±Ù…Ø°ÙŠ (Ø³Ù†Ù† Ø§Ù„ØªØ±Ù…Ø°ÙŠ)', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­Ù…Ø¯ Ø¨Ù† Ø¹ÙŠØ³Ù‰ Ø§Ù„ØªØ±Ù…Ø°ÙŠ', serial_number: 'SN-2024-009', alphabetical_section: 'Ø¬', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù§Ù¢', total_copies: 8, available_copies: 6 },
+      { id: 'b10', catalogue_number: 'UQL-1010', title: 'Ø³Ù†Ù† Ø£Ø¨ÙŠ Ø¯Ø§ÙˆØ¯', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø£Ø¨Ùˆ Ø¯Ø§ÙˆØ¯ Ø§Ù„Ø³Ø¬Ø³ØªØ§Ù†ÙŠ', serial_number: 'SN-2024-010', alphabetical_section: 'Ø³', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù©Ù ', total_copies: 6, available_copies: 4 },
+      { id: 'b11', catalogue_number: 'UQL-1011', title: 'Ø³Ù†Ù† Ø§Ù„Ù†Ø³Ø§Ø¦ÙŠ (Ø§Ù„Ù…Ø¬ØªØ¨Ù‰)', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø£Ø­Ù…Ø¯ Ø¨Ù† Ø´Ø¹ÙŠØ¨ Ø§Ù„Ù†Ø³Ø§Ø¦ÙŠ', serial_number: 'SN-2024-011', alphabetical_section: 'Ø³', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù¡Ù¥', total_copies: 5, available_copies: 3 },
+      { id: 'b12', catalogue_number: 'UQL-1012', title: 'Ø³Ù†Ù† Ø§Ø¨Ù† Ù…Ø§Ø¬Ù‡', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­Ù…Ø¯ Ø¨Ù† Ù…Ø§Ø¬Ù‡ Ø§Ù„Ù‚Ø²ÙˆÙŠÙ†ÙŠ', serial_number: 'SN-2024-012', alphabetical_section: 'Ø³', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù£Ù ', total_copies: 6, available_copies: 5 },
+      { id: 'b13', catalogue_number: 'UQL-1013', title: 'Ø³ÙŠØ± Ø£Ø¹Ù„Ø§Ù… Ø§Ù„Ù†Ø¨Ù„Ø§Ø¡', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø´Ù…Ø³ Ø§Ù„Ø¯ÙŠÙ† Ø§Ù„Ø°Ù‡Ø¨ÙŠ', serial_number: 'SN-2024-013', alphabetical_section: 'Ø³', category: 'ØªØ±Ø§Ø¬Ù… Ùˆ Ø±Ø¬Ø§Ù„', source_page: 'Øµ Ù¤Ù Ù ', total_copies: 4, available_copies: 2 },
+      { id: 'b14', catalogue_number: 'UQL-1014', title: 'Ø§Ù„Ø¹Ù‚ÙŠØ¯Ø© Ø§Ù„Ø·Ø­Ø§ÙˆÙŠØ©', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø£Ø¨Ùˆ Ø¬Ø¹ÙØ± Ø§Ù„Ø·Ø­Ø§ÙˆÙŠ Ø§Ù„Ø­Ù†ÙÙŠ', serial_number: 'SN-2024-014', alphabetical_section: 'Ø¹', category: 'Ø¹Ù„Ù… Ø§Ù„Ø¹Ù‚ÛŒØ¯Û', source_page: 'Øµ Ù¡Ù¢', total_copies: 15, available_copies: 11 },
+      { id: 'b15', catalogue_number: 'UQL-1015', title: 'ÙƒØªØ§Ø¨ Ø§Ù„ØªÙˆØ­ÙŠØ¯ Ø§Ù„Ø°ÙŠ Ù‡Ùˆ Ø­Ù‚ Ø§Ù„Ù„Ù‡ Ø¹Ù„Ù‰ Ø§Ù„Ø¹Ø¨ÙŠØ¯', author: 'Ø§Ù„Ø´ÙŠØ® Ù…Ø­Ù…Ø¯ Ø¨Ù† Ø¹Ø¨Ø¯ Ø§Ù„ÙˆÙ‡Ø§Ø¨', serial_number: 'SN-2024-015', alphabetical_section: 'Ùƒ', category: 'Ø¹Ù„Ù… Ø§Ù„Ø¹Ù‚ÛŒØ¯Û', source_page: 'Øµ Ù¥', total_copies: 10, available_copies: 8 },
+      { id: 'b16', catalogue_number: 'UQL-1016', title: 'Ø§Ù„Ø±Ø­ÙŠÙ‚ Ø§Ù„Ù…Ø®ØªÙˆÙ…', author: 'Ø§Ù„Ø´ÙŠØ® ØµÙÙŠ Ø§Ù„Ø±Ø­Ù…Ù† Ø§Ù„Ù…Ø¨Ø§Ø±ÙƒÙÙˆØ±ÙŠ', serial_number: 'SN-2024-016', alphabetical_section: 'Ø§', category: 'Ø³ÛŒØ±Øª Ø·ÛŒØ¨Û', source_page: 'Øµ Ù¡Ù¨Ù ', total_copies: 9, available_copies: 6 },
+      { id: 'b17', catalogue_number: 'UQL-1017', title: 'Ø§Ù„Ø£Ø±Ø¨Ø¹ÙˆÙ† Ø§Ù„Ù†ÙˆÙˆÙŠØ©', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­ÙŠÙŠ Ø§Ù„Ø¯ÙŠÙ† Ø§Ù„Ù†ÙˆÙˆÙŠ', serial_number: 'SN-2024-017', alphabetical_section: 'Ø§', category: 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ', source_page: 'Øµ Ù¢', total_copies: 20, available_copies: 16 },
+      { id: 'b18', catalogue_number: 'UQL-1018', title: 'Ù…Ø¯Ø§Ø±Ø¬ Ø§Ù„Ø³Ø§Ù„ÙƒÙŠÙ† Ø¨ÙŠÙ† Ù…Ù†Ø§Ø²Ù„ Ø¥ÙŠØ§Ùƒ Ù†Ø¹Ø¨Ø¯ ÙˆØ¥ÙŠØ§Ùƒ Ù†Ø³ØªØ¹ÙŠÙ†', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø§Ø¨Ù† Ù‚ÙŠÙ… Ø§Ù„Ø¬ÙˆØ²ÙŠØ©', serial_number: 'SN-2024-018', alphabetical_section: 'Ù…', category: 'ØªØ²Ú©ÛŒÙ‡ Ùˆ Ø§Ø­Ø³Ø§Ù†', source_page: 'Øµ Ù£Ù¡Ù ', total_copies: 4, available_copies: 2 },
+      { id: 'b19', catalogue_number: 'UQL-1019', title: 'Ø¥Ø­ÙŠØ§Ø¡ Ø¹Ù„ÙˆÙ… Ø§Ù„Ø¯ÙŠÙ†', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø£Ø¨Ùˆ Ø­Ø§Ù…Ø¯ Ø§Ù„ØºØ²Ø§Ù„ÙŠ', serial_number: 'SN-2024-019', alphabetical_section: 'Ø§', category: 'Ø§Ø®Ù„Ø§Ù‚ Ùˆ ØªØ²Ú©ÛŒÙ‡', source_page: 'Øµ Ù¢Ù¢Ù ', total_copies: 5, available_copies: 3 },
+      { id: 'b20', catalogue_number: 'UQL-1020', title: 'Ø§Ù„Ù…ØºÙ†ÙŠ ÙÙŠ ÙÙ‚Ù‡ Ø§Ù„Ø¥Ù…Ø§Ù… Ø£Ø­Ù…Ø¯ Ø¨Ù† Ø­Ù†Ø¨Ù„', author: 'Ù…ÙˆÙÙ‚ Ø§Ù„Ø¯ÙŠÙ† Ø§Ø¨Ù† Ù‚Ø¯Ø§Ù…Ø© Ø§Ù„Ù…Ù‚Ø¯Ø³ÙŠ', serial_number: 'SN-2024-020', alphabetical_section: 'Ø§', category: 'ÙÙ‚Ù‡ Ù…Ù‚Ø§Ø±Ù†', source_page: 'Øµ Ù¦Ù¥Ù ', total_copies: 3, available_copies: 1 },
+      { id: 'b21', catalogue_number: 'UQL-1021', title: 'ØªÙØ³ÙŠØ± Ø§Ù„Ø¬Ù„Ø§Ù„ÙŠÙ†', author: 'Ø¬Ù„Ø§Ù„ Ø§Ù„Ø¯ÙŠÙ† Ø§Ù„Ù…Ø­Ù„ÙŠ ÙˆØ¬Ù„Ø§Ù„ Ø§Ù„Ø¯ÙŠÙ† Ø§Ù„Ø³ÙŠÙˆØ·ÙŠ', serial_number: 'SN-2024-021', alphabetical_section: 'Øª', category: 'ØªÙØ³ÛŒØ± Ù‚Ø±Ø¢Ù†', source_page: 'Øµ Ù©Ù¥', total_copies: 11, available_copies: 8 },
+      { id: 'b22', catalogue_number: 'UQL-1022', title: 'ØªÙŠØ³ÙŠØ± Ø§Ù„ÙƒØ±ÙŠÙ… Ø§Ù„Ø±Ø­Ù…Ù† ÙÙŠ ØªÙØ³ÙŠØ± ÙƒÙ„Ø§Ù… Ø§Ù„Ù…Ù†Ø§Ù†', author: 'Ø§Ù„Ø´ÙŠØ® Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø­Ù…Ù† Ø¨Ù† Ù†Ø§ØµØ± Ø§Ù„Ø³Ø¹Ø¯ÙŠ', serial_number: 'SN-2024-022', alphabetical_section: 'Øª', category: 'ØªÙØ³ÛŒØ± Ù‚Ø±Ø¢Ù†', source_page: 'Øµ Ù¡Ù¤Ù ', total_copies: 8, available_copies: 5 },
+      { id: 'b23', catalogue_number: 'UQL-1023', title: 'Ø³ÛŒØ±Øª Ø³Ø±ÙˆØ± Ø¹Ø§Ù„Ù… (Ø§Ø±Ø¯Ùˆ)', author: 'Ù…ÙˆÙ„Ø§Ù†Ø§ Ø³ÛŒØ¯ Ø§Ø¨ÙˆØ§Ù„Ø§Ø¹Ù„ÛŒ Ù…ÙˆØ¯ÙˆØ¯ÛŒ', serial_number: 'SN-2024-023', alphabetical_section: 'Ø³', category: 'Ø³ÛŒØ±Øª Ø§Ø±Ø¯Ùˆ', source_page: 'Øµ Ù¢Ù¥Ù ', total_copies: 7, available_copies: 4 },
+      { id: 'b24', catalogue_number: 'UQL-1024', title: 'Ø¨ÛØ´ØªÛŒ Ø²ÛŒÙˆØ± (Ø§Ø±Ø¯Ùˆ)', author: 'Ù…ÙˆÙ„Ø§Ù†Ø§ Ù…Ø¬Ø¯Ø¯ Ø§Ù„Ù…Ù„Øª Ø§Ø´Ø±Ù Ø¹Ù„ÛŒ ØªÚ¾Ø§Ù†ÙˆÛŒ', serial_number: 'SN-2024-024', alphabetical_section: 'Ø¨', category: 'ÙÙ‚Û Ø­Ù†ÙÛŒ Ø§Ø±Ø¯Ùˆ', source_page: 'Øµ Ù¡Ù¡Ù¥', total_copies: 10, available_copies: 7 },
+      { id: 'b25', catalogue_number: 'UQL-1025', title: 'Ù…Ø¹Ø§Ø±Ù Ø§Ù„Ù‚Ø±Ø¢Ù† (Ø§Ø±Ø¯Ùˆ)', author: 'Ù…ÙØªÛŒ Ø§Ø¹Ø¸Ù… Ù…Ø­Ù…Ø¯ Ø´ÙÛŒØ¹ Ø¹Ø«Ù…Ø§Ù†ÛŒ', serial_number: 'SN-2024-025', alphabetical_section: 'Ù…', category: 'ØªÙØ³ÛŒØ± Ø§Ø±Ø¯Ùˆ', source_page: 'Øµ Ù£Ù¨Ù ', total_copies: 6, available_copies: 3 },
+      { id: 'b26', catalogue_number: 'UQL-1026', title: 'Ù…Ø¬Ù…ÙˆØ¹ ÙØªØ§ÙˆÙ‰ Ø´ÙŠØ® Ø§Ù„Ø¥Ø³Ù„Ø§Ù… Ø§Ø¨Ù† ØªÙŠÙ…ÙŠØ©', author: 'Ø´ÙŠØ® Ø§Ù„Ø¥Ø³Ù„Ø§Ù… ØªÙ‚ÙŠ Ø§Ù„Ø¯ÙŠÙ† Ø§Ø¨Ù† ØªÙŠÙ…ÙŠØ©', serial_number: 'SN-2024-026', alphabetical_section: 'Ù…', category: 'ÙØªØ§ÙˆÙ‰ Ùˆ Ø¹Ù‚ÙŠØ¯Ø©', source_page: 'Øµ Ù§Ù¨Ù ', total_copies: 4, available_copies: 2 },
+      { id: 'b27', catalogue_number: 'UQL-1027', title: 'Ø§Ù„Ù…Ø­Ù„Ù‰ Ø¨Ø§Ù„Ø¢Ø«Ø§Ø±', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø¹Ù„ÙŠ Ø¨Ù† Ø£Ø­Ù…Ø¯ Ø¨Ù† Ø­Ø²Ù… Ø§Ù„Ø£Ù†Ø¯Ù„Ø³ÙŠ', serial_number: 'SN-2024-027', alphabetical_section: 'Ø§', category: 'ÙÙ‚Ù‡ Ø¸Ø§Ù‡Ø±', source_page: 'Øµ Ù¤Ù¢Ù ', total_copies: 3, available_copies: 1 },
+      { id: 'b28', catalogue_number: 'UQL-1028', title: 'Ø§Ù„Ø±Ø³Ø§Ù„Ø© ÙÙŠ Ø£ØµÙˆÙ„ Ø§Ù„ÙÙ‚Ù‡', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­Ù…Ø¯ Ø¨Ù† Ø¥Ø¯Ø±ÙŠØ³ Ø§Ù„Ø´Ø§ÙØ¹ÙŠ', serial_number: 'SN-2024-028', alphabetical_section: 'Ø§', category: 'Ø£ØµÙˆÙ„ Ø§Ù„ÙÙ‚Ù‡', source_page: 'Øµ Ù¥Ù¥', total_copies: 6, available_copies: 4 },
+      { id: 'b29', catalogue_number: 'UQL-1029', title: 'Ù„Ø³Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨', author: 'Ø§Ù„Ø¹Ù„Ø§Ù…Ø© Ø§Ø¨Ù† Ù…Ù†Ø¸ÙˆØ± Ø§Ù„Ø£ÙØ±ÙŠÙ‚ÙŠ', serial_number: 'SN-2024-029', alphabetical_section: 'Ù„', category: 'Ù„ØºØª Ùˆ Ø§Ø¯Ø¨', source_page: 'Øµ Ù©Ù Ù ', total_copies: 4, available_copies: 2 },
+      { id: 'b30', catalogue_number: 'UQL-1030', title: 'Ø±Ø¯ Ø§Ù„Ù…Ø­ØªØ§Ø± Ø¹Ù„Ù‰ Ø§Ù„Ø¯Ø± Ø§Ù„Ù…Ø®ØªØ§Ø± (ÙØªØ§ÙˆÛŒ Ø´Ø§Ù…ÛŒ)', author: 'Ø§Ù„Ø¹Ù„Ø§Ù…Ø© Ø§Ø¨Ù† Ø¹Ø§Ø¨Ø¯ÙŠÙ† Ø§Ù„Ø´Ø§Ù…ÙŠ', serial_number: 'SN-2024-030', alphabetical_section: 'Ø±', category: 'ÙÙ‚Û Ø­Ù†ÙÛŒ', source_page: 'Øµ Ù¦Ù Ù ', total_copies: 5, available_copies: 3 },
+      { id: 'b31', catalogue_number: 'UQL-1031', title: 'Ù…Ù‚Ø¯Ù…Ø© Ø§Ø¨Ù† Ø®Ù„Ø¯ÙˆÙ†', author: 'Ø§Ù„Ø¹Ù„Ø§Ù…Ø© Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø­Ù…Ù† Ø¨Ù† Ø®Ù„Ø¯ÙˆÙ†', serial_number: 'SN-2024-031', alphabetical_section: 'Ù…', category: 'ØªØ§Ø±ÛŒØ® Ùˆ Ø¹Ù…Ø±Ø§Ù†', source_page: 'Øµ Ù£Ù£Ù ', total_copies: 8, available_copies: 5 },
+      { id: 'b32', catalogue_number: 'UQL-1032', title: 'Ø¬Ø§Ù…Ø¹ Ø§Ù„Ø¹Ù„ÙˆÙ… ÙˆØ§Ù„Ø­ÙƒÙ…', author: 'Ø§Ù„Ø­Ø§ÙØ¸ Ø²ÙŠÙ† Ø§Ù„Ø¯ÙŠÙ† Ø§Ø¨Ù† Ø±Ø¬Ø¨ Ø§Ù„Ø­Ù†Ø¨Ù„ÙŠ', serial_number: 'SN-2024-032', alphabetical_section: 'Ø¬', category: 'Ø­Ø¯ÙŠØ« Ùˆ Ø´Ø±ÙˆØ­Ø§Øª', source_page: 'Øµ Ù¡Ù§Ù¥', total_copies: 6, available_copies: 4 },
+      { id: 'b33', catalogue_number: 'UQL-1033', title: 'ØµÙØ© ØµÙ„Ø§Ø© Ø§Ù„Ù†Ø¨ÙŠ ØµÙ„Ù‰ Ø§Ù„Ù„Ù‡ Ø¹Ù„ÙŠÙ‡ ÙˆØ³Ù„Ù…', author: 'Ø§Ù„Ø´ÙŠØ® Ù…Ø­Ù…Ø¯ Ù†Ø§ØµØ± Ø§Ù„Ø¯ÙŠÙ† Ø§Ù„Ø£Ù„Ø¨Ø§Ù†ÙŠ', serial_number: 'SN-2024-033', alphabetical_section: 'Øµ', category: 'ÙÙ‚Ù‡ Ùˆ Ø­Ø¯ÙŠØ«', source_page: 'Øµ Ù¤Ù¨', total_copies: 12, available_copies: 9 },
+      { id: 'b34', catalogue_number: 'UQL-1034', title: 'ÙÙ‚Ù‡ Ø§Ù„Ø³Ù†Ø©', author: 'Ø§Ù„Ø´ÙŠØ® Ø§Ù„Ø³ÙŠØ¯ Ø³Ø§Ø¨Ù‚', serial_number: 'SN-2024-034', alphabetical_section: 'Ù', category: 'ÙÙ‚Ù‡ Ù…ÙŠØ³Ø±', source_page: 'Øµ Ù¢Ù©Ù ', total_copies: 7, available_copies: 5 },
+      { id: 'b35', catalogue_number: 'UQL-1035', title: 'Ù†ÙŠÙ„ Ø§Ù„Ø£ÙˆØ·Ø§Ø± Ù…Ù† Ø£Ø³Ø±Ø§Ø± Ù…Ù†ØªÙ‚Ù‰ Ø§Ù„Ø£Ø®Ø¨Ø§Ø±', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­Ù…Ø¯ Ø¨Ù† Ø¹Ù„ÙŠ Ø§Ù„Ø´ÙˆÙƒØ§Ù†ÙŠ', serial_number: 'SN-2024-035', alphabetical_section: 'Ù†', category: 'Ø£Ø­Ø§Ø¯ÙŠØ« Ø§Ù„Ø£Ø­ÙƒØ§Ù…', source_page: 'Øµ Ù¥Ù¡Ù ', total_copies: 4, available_copies: 2 },
+      { id: 'b36', catalogue_number: 'UQL-1036', title: 'Ø§Ù„Ù…Ù†Ù‡Ø§Ø¬ Ø´Ø±Ø­ ØµØ­ÙŠØ­ Ù…Ø³Ù„Ù… Ø¨Ù† Ø§Ù„Ø­Ø¬Ø§Ø¬', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… ÙŠØ­ÙŠÙ‰ Ø¨Ù† Ø´Ø±Ù Ø§Ù„Ù†ÙˆÙˆÙŠ', serial_number: 'SN-2024-036', alphabetical_section: 'Ø§', category: 'Ø­Ø¯ÙŠØ« Ùˆ Ø´Ø±ÙˆØ­Ø§Øª', source_page: 'Øµ Ù£Ù¤Ù ', total_copies: 5, available_copies: 3 },
+      { id: 'b37', catalogue_number: 'UQL-1037', title: 'Ú©Ø´Ù Ø§Ù„Ù…Ø­Ø¬ÙˆØ¨ (Ø§Ø±Ø¯Ùˆ)', author: 'Ø­Ø¶Ø±Øª Ø¹Ù„ÛŒ Ø¨Ù† Ø¹Ø«Ù…Ø§Ù† ÛØ¬ÙˆÛŒØ±ÛŒ (Ø¯Ø§ØªØ§ Ú¯Ù†Ø¬ Ø¨Ø®Ø´)', serial_number: 'SN-2024-037', alphabetical_section: 'Ú©', category: 'ØªØµÙˆÙ Ùˆ Ø³Ù„ÙˆÚ©', source_page: 'Øµ Ù¡Ù¨Ù ', total_copies: 6, available_copies: 4 },
+      { id: 'b38', catalogue_number: 'UQL-1038', title: 'ØªÙÛÛŒÙ… Ø§Ù„Ù‚Ø±Ø¢Ù† (Ø§Ø±Ø¯Ùˆ)', author: 'Ù…ÙˆÙ„Ø§Ù†Ø§ Ø³ÛŒØ¯ Ø§Ø¨ÙˆØ§Ù„Ø§Ø¹Ù„ÛŒ Ù…ÙˆØ¯ÙˆØ¯ÛŒ', serial_number: 'SN-2024-038', alphabetical_section: 'Øª', category: 'ØªÙØ³ÛŒØ± Ø§Ø±Ø¯Ùˆ', source_page: 'Øµ Ù§Ù¥Ù ', total_copies: 9, available_copies: 6 },
+      { id: 'b39', catalogue_number: 'UQL-1039', title: 'Ø´Ø±Ø­ Ø§Ù„Ø³Ù†Ø©', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø§Ù„Ø­Ø³ÙŠÙ† Ø¨Ù† Ù…Ø³Ø¹ÙˆØ¯ Ø§Ù„Ø¨ØºÙˆÙŠ', serial_number: 'SN-2024-039', alphabetical_section: 'Ø´', category: 'Ø­Ø¯ÙŠØ« Ùˆ ÙÙ‚Ù‡', source_page: 'Øµ Ù¢Ù¡Ù ', total_copies: 4, available_copies: 2 },
+      { id: 'b40', catalogue_number: 'UQL-1040', title: 'Ø§Ù„Ø£Ø´Ø¨Ø§Ù‡ ÙˆØ§Ù„Ù†Ø¸Ø§Ø¦Ø± ÙÙŠ Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„ÙÙ‚Ù‡', author: 'Ø§Ù„Ø¬Ù„Ø§Ù„ Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø­Ù…Ù† Ø§Ù„Ø³ÙŠÙˆØ·ÙŠ', serial_number: 'SN-2024-040', alphabetical_section: 'Ø§', category: 'Ù‚ÙˆØ§Ø¹Ø¯ ÙÙ‚Ù‡ÙŠØ©', source_page: 'Øµ Ù¡Ù¦Ù ', total_copies: 5, available_copies: 3 },
+      { id: 'b41', catalogue_number: 'UQL-1041', title: 'Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø£Ø­ÙƒØ§Ù… ÙÙŠ Ù…ØµØ§Ù„Ø­ Ø§Ù„Ø£Ù†Ø§Ù…', author: 'Ø§Ù„Ø¹Ø² Ø¨Ù† Ø¹Ø¨Ø¯ Ø§Ù„Ø³Ù„Ø§Ù… Ø§Ù„Ø³Ù„Ù…ÙŠ', serial_number: 'SN-2024-041', alphabetical_section: 'Ù‚', category: 'Ù‚ÙˆØ§Ø¹Ø¯ Ùˆ Ø£ØµÙˆÙ„', source_page: 'Øµ Ù¡Ù©Ù¥', total_copies: 4, available_copies: 2 },
+      { id: 'b42', catalogue_number: 'UQL-1042', title: 'ÙØªØ§ÙˆÙ‰ Ø¹Ø§Ù„Ù…Ú¯ÛŒØ±ÛŒ (Ø§Ù„ÙØªÙˆÙ‰ Ø§Ù„Ù‡Ù†Ø¯ÙŠØ© - Ø§Ø±Ø¯Ùˆ)', author: 'Ø¬Ù…Ø§Ø¹Ø© Ù…Ù† Ø¹Ù„Ù…Ø§Ø¡ Ø§Ù„Ù‡Ù†Ø¯ Ø¨Ø¥Ø´Ø±Ø§Ù Ø£ÙˆØ±Ù†ÙƒØ²ÙŠØ¨ Ø¹Ø§Ù„Ù…Ú©ÙŠØ±', serial_number: 'SN-2024-042', alphabetical_section: 'Ù', category: 'ÙÙ‚Û Ø­Ù†ÙÛŒ', source_page: 'Øµ Ù¨Ù¥Ù ', total_copies: 7, available_copies: 4 },
+      { id: 'b43', catalogue_number: 'UQL-1043', title: 'Ù‚ØµØµ Ø§Ù„Ø£Ù†Ø¨ÙŠØ§Ø¡', author: 'Ø§Ù„Ø­Ø§ÙØ¸ Ø§Ø¨Ù† ÙƒØ«ÙŠØ± Ø§Ù„Ø¯Ù…Ø´Ù‚ÙŠ', serial_number: 'SN-2024-043', alphabetical_section: 'Ù‚', category: 'Ù‚ØµØµ Ùˆ ØªØ§Ø±ÙŠØ®', source_page: 'Øµ Ù¢Ù§Ù ', total_copies: 11, available_copies: 8 },
+      { id: 'b44', catalogue_number: 'UQL-1044', title: 'Ø§Ù„Ø´ÙØ§Ø¡ Ø¨ØªØ¹Ø±ÙŠÙ Ø­Ù‚ÙˆÙ‚ Ø§Ù„Ù…ØµØ·ÙÙ‰', author: 'Ø§Ù„Ù‚Ø§Ø¶ÙŠ Ø£Ø¨Ùˆ Ø§Ù„ÙØ¶Ù„ Ø¹ÙŠØ§Ø¶ Ø§Ù„ÙŠØ­ØµØ¨ÙŠ', serial_number: 'SN-2024-044', alphabetical_section: 'Ø§', category: 'Ø´Ù…Ø§Ø¦Ù„ Ùˆ Ø³ÙŠØ±Øª', source_page: 'Øµ Ù£Ù¥Ù ', total_copies: 8, available_copies: 5 },
+      { id: 'b45', catalogue_number: 'UQL-1045', title: 'Ø£Ø¯Ø¨ Ø§Ù„Ø¯Ù†ÙŠØ§ ÙˆØ§Ù„Ø¯ÙŠÙ†', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø£Ø¨Ùˆ Ø§Ù„Ø­Ø³Ù† Ø¹Ù„ÙŠ Ø¨Ù† Ù…Ø­Ù…Ø¯ Ø§Ù„Ù…Ø§ÙˆØ±Ø¯ÙŠ', serial_number: 'SN-2024-045', alphabetical_section: 'Ø§', category: 'Ø£Ø®Ù„Ø§Ù‚ Ùˆ Ø¢Ø¯Ø§Ø¨', source_page: 'Øµ Ù¢Ù¤Ù ', total_copies: 6, available_copies: 4 },
+      { id: 'b46', catalogue_number: 'UQL-1046', title: 'Ø¥Ø¹Ù„Ø§Ù… Ø§Ù„Ù…ÙˆÙ‚Ø¹ÙŠÙ† Ø¹Ù† Ø±Ø¨ Ø§Ù„Ø¹Ø§Ù„Ù…ÙŠÙ†', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ø´Ù…Ø³ Ø§Ù„Ø¯ÙŠÙ† Ø§Ø¨Ù† Ù‚ÙŠÙ… Ø§Ù„Ø¬ÙˆØ²ÙŠØ©', serial_number: 'SN-2024-046', alphabetical_section: 'Ø§', category: 'Ø£ØµÙˆÙ„ Ùˆ ÙØªØ§ÙˆÙ‰', source_page: 'Øµ Ù¥Ù¦Ù ', total_copies: 4, available_copies: 2 },
+      { id: 'b47', catalogue_number: 'UQL-1047', title: 'ÙØªØ­ Ø§Ù„Ù…Ø¬ÙŠØ¯ Ø´Ø±Ø­ ÙƒØªØ§Ø¨ Ø§Ù„ØªÙˆØ­ÙŠØ¯', author: 'Ø§Ù„Ø´ÙŠØ® Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø­Ù…Ù† Ø¨Ù† Ø­Ø³Ù† Ø¢Ù„ Ø§Ù„Ø´ÙŠØ®', serial_number: 'SN-2024-047', alphabetical_section: 'Ù', category: 'ØªÙˆØ­ÙŠØ¯ Ùˆ Ø¹Ù‚ÙŠØ¯Ø©', source_page: 'Øµ Ù¢Ù¡Ù¥', total_copies: 7, available_copies: 5 },
+      { id: 'b48', catalogue_number: 'UQL-1048', title: 'ØªØ§Ø±ÛŒØ® Ø·Ø¨Ø±ÛŒ (ØªØ§Ø±ÙŠØ® Ø§Ù„Ø£Ù…Ù… ÙˆØ§Ù„Ù…Ù„ÙˆÙƒ)', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­Ù…Ø¯ Ø¨Ù† Ø¬Ø±ÙŠØ± Ø§Ù„Ø·Ø¨Ø±ÙŠ', serial_number: 'SN-2024-048', alphabetical_section: 'Øª', category: 'ØªØ§Ø±ÛŒØ® Ø§Ø³Ù„Ø§Ù…', source_page: 'Øµ Ù©Ù¢Ù ', total_copies: 5, available_copies: 3 },
+      { id: 'b49', catalogue_number: 'UQL-1049', title: 'Ø¬Ø§Ù…Ø¹ Ø§Ù„Ø¨ÙŠØ§Ù† Ø¹Ù† ØªØ£ÙˆÙŠÙ„ Ø£ÙŠ Ø§Ù„Ù‚Ø±Ø¢Ù† (ØªÙØ³ÙŠØ± Ø§Ù„Ø·Ø¨Ø±ÙŠ)', author: 'Ø§Ù„Ø¥Ù…Ø§Ù… Ù…Ø­Ù…Ø¯ Ø¨Ù† Ø¬Ø±ÙŠØ± Ø§Ù„Ø·Ø¨Ø±ÙŠ', serial_number: 'SN-2024-049', alphabetical_section: 'Øª', category: 'ØªÙØ³ÙŠØ± Ù…Ø£Ø«ÙˆØ±', source_page: 'Øµ Ù©Ù¥Ù ', total_copies: 6, available_copies: 3 },
+      { id: 'b50', catalogue_number: 'UQL-1050', title: 'Ø³ÛŒØ±Øª Ø§Ù„Ù†Ø¨ÛŒ ØµÙ„Ù‰ Ø§Ù„Ù„Û Ø¹Ù„ÛŒÛ ÙˆØ³Ù„Ù… (Ø§Ø±Ø¯Ùˆ)', author: 'Ø¹Ù„Ø§Ù…Û Ø´Ø¨Ù„ÛŒ Ù†Ø¹Ù…Ø§Ù†ÛŒ Ùˆ Ø³ÛŒØ¯ Ø³Ù„ÛŒÙ…Ø§Ù† Ù†Ø¯ÙˆÛŒ', serial_number: 'SN-2024-050', alphabetical_section: 'Ø³', category: 'Ø³ÛŒØ±Øª Ø§Ø±Ø¯Ùˆ', source_page: 'Øµ Ù¦Ù¢Ù ', total_copies: 9, available_copies: 6 }
     ];
 
-    // Multilingual Header Field Mapping Table
+    // Header Mapping Table
     const HEADER_MAP = {
-      title: ['title', 'book title', '˜ÊÇÈ ˜Ç äÇã', 'ÚäæÇä ˜ÊÇÈ', 'ÇÓã ÇáßÊÇÈ', 'ÚäæÇä', 'äÇã ˜ÊÇÈ'],
-      author: ['author', 'book author', 'ãÕäİ', 'ãÄáİ', 'ÇáãÄáİ', 'ÇáßÇÊÈ', 'ãÕäİ ˜Ç äÇã'],
-      serial_number: ['serial number', 'serial_number', 'serial', 'ÓáÓáÀ äãÈÑ', 'ÓíÑíá äãÈÑ', 'ÇáÑŞã ÇáÊÓáÓáí', 'ÑŞã ÊÓáÓáí', 'ÓíÑíá'],
-      catalogue_number: ['catalogue number', 'catalogue_number', 'catalogue', 'İÀÑÓÊ äãÈÑ', '˜íŠáÇ äãÈÑ', 'ÑŞã ÇáİåÑÓ', 'İåÑÓ', '˜íŠáÇ'],
-      alphabetical_section: ['alphabetical section', 'alphabetical_section', 'section', 'ÇáİÈÇÆí ÔÚÈÀ', 'ÔÚÈÀ', 'ÍÑİ', 'ÇáŞÓã ÇáÃÈÌÏí', 'ÈÎÔ'],
-      source_page: ['source page', 'source_page', 'page', 'ãÇÎĞ ÕİÍÀ', 'ÕİÍÀ äãÈÑ', 'ÑŞã ÇáÕİÍÉ', 'ÇáÕİÍÉ', 'ÕİÍÀ'],
-      category: ['category', 'subject', 'ÊÕäíİ', 'ãæÖæÚ', 'ÇáÊÕäíİ', 'ÇáãæÖæÚ', 'ãÖãæä'],
-      total_copies: ['total copies', 'total_copies', 'copies', '˜á äÓÎÿ', 'ÚÏÏ ÇáäÓÎ', 'äÓÎÿ'],
-      available_copies: ['available copies', 'available_copies', 'ãæÌæÏ äÓÎÿ', 'ÇáäÓÎ ÇáãÊÇÍÉ']
+      title: ['title', 'book title', 'Ú©ØªØ§Ø¨ Ú©Ø§ Ù†Ø§Ù…', 'Ø¹Ù†ÙˆØ§Ù† Ú©ØªØ§Ø¨', 'Ø§Ø³Ù… Ø§Ù„ÙƒØªØ§Ø¨', 'Ø¹Ù†ÙˆØ§Ù†', 'Ù†Ø§Ù… Ú©ØªØ§Ø¨'],
+      author: ['author', 'book author', 'Ù…ØµÙ†Ù', 'Ù…Ø¤Ù„Ù', 'Ø§Ù„Ù…Ø¤Ù„Ù', 'Ø§Ù„ÙƒØ§ØªØ¨', 'Ù…ØµÙ†Ù Ú©Ø§ Ù†Ø§Ù…'],
+      serial_number: ['serial number', 'serial_number', 'serial', 'Ø³Ù„Ø³Ù„Û Ù†Ù…Ø¨Ø±', 'Ø³ÛŒØ±ÛŒÙ„ Ù†Ù…Ø¨Ø±', 'Ø§Ù„Ø±Ù‚Ù… Ø§Ù„ØªØ³Ù„Ø³Ù„ÙŠ', 'Ø±Ù‚Ù… ØªØ³Ù„Ø³Ù„ÙŠ', 'Ø³ÛŒØ±ÛŒÙ„'],
+      catalogue_number: ['catalogue number', 'catalogue_number', 'catalogue', 'ÙÛØ±Ø³Øª Ù†Ù…Ø¨Ø±', 'Ú©ÛŒÙ¹Ù„Ø§Ú¯ Ù†Ù…Ø¨Ø±', 'Ø±Ù‚Ù… Ø§Ù„ÙÙ‡Ø±Ø³', 'ÙÙ‡Ø±Ø³', 'Ú©ÛŒÙ¹Ù„Ø§Ú¯'],
+      alphabetical_section: ['alphabetical section', 'alphabetical_section', 'section', 'Ø§Ù„ÙØ¨Ø§Ø¦ÛŒ Ø´Ø¹Ø¨Û', 'Ø´Ø¹Ø¨Û', 'Ø­Ø±Ù', 'Ø§Ù„Ù‚Ø³Ù… Ø§Ù„Ø£Ø¨Ø¬Ø¯ÙŠ', 'Ø¨Ø®Ø´'],
+      source_page: ['source page', 'source_page', 'page', 'Ù…Ø§Ø®Ø° ØµÙØ­Û', 'ØµÙØ­Û Ù†Ù…Ø¨Ø±', 'Ø±Ù‚Ù… Ø§Ù„ØµÙØ­Ø©', 'Ø§Ù„ØµÙØ­Ø©', 'ØµÙØ­Û'],
+      category: ['category', 'subject', 'ØªØµÙ†ÛŒÙ', 'Ù…ÙˆØ¶ÙˆØ¹', 'Ø§Ù„ØªØµÙ†ÙŠÙ', 'Ø§Ù„Ù…ÙˆØ¶ÙˆØ¹', 'Ù…Ø¶Ù…ÙˆÙ†'],
+      total_copies: ['total copies', 'total_copies', 'copies', 'Ú©Ù„ Ù†Ø³Ø®Û’', 'Ø¹Ø¯Ø¯ Ø§Ù„Ù†Ø³Ø®', 'Ù†Ø³Ø®Û’'],
+      available_copies: ['available copies', 'available_copies', 'Ù…ÙˆØ¬ÙˆØ¯ Ù†Ø³Ø®Û’', 'Ø§Ù„Ù†Ø³Ø® Ø§Ù„Ù…ØªØ§Ø­Ø©']
     };
 
-    // UI Text Translations with strictly verified Library Names:
-    // Urdu: Çõãø ÇáŞÑí? áÇÆÈÑíÑí | Arabic: ãßÊÈÉ Ãã ÇáŞÑì | English: Ummul Qura Library
+    // Dictionary with Verified Names: Urdu 'Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ', Arabic 'Ù…ÙƒØªØ¨Ø© Ø£Ù… Ø§Ù„Ù‚Ø±Ù‰', English 'Ummul Qura Library'
     const UI_DICTIONARY = {
       ur: {
-        appTitle: 'Çõãø ÇáŞÑí? áÇÆÈÑíÑí',
-        appSubtitle: 'ãßÊÈÉ Ãã ÇáŞÑì - ÇÓáÇãí æ Úáãí ˜ÊÈ æ İÀÇÑÓ ˜Ç ÌíŠá ĞÎíÑÀ',
-        publicCatalogTab: 'ÚæÇãí İÀÑÓÊ',
-        adminDashboardTab: 'Çíãä íÔ ÈæÑ',
-        adminLogout: 'ÎÑæÌ (Logout)',
+        appTitle: 'Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ',
+        appSubtitle: 'Ù…ÙƒØªØ¨Ø© Ø£Ù… Ø§Ù„Ù‚Ø±Ù‰ - Ø§Ø³Ù„Ø§Ù…ÛŒ Ùˆ Ø¹Ù„Ù…ÛŒ Ú©ØªØ¨ Ùˆ ÙÛØ§Ø±Ø³ Ú©Ø§ ÚˆØ¬ÛŒÙ¹Ù„ Ø°Ø®ÛŒØ±Û',
+        publicCatalogTab: 'Ø¹ÙˆØ§Ù…ÛŒ ÙÛØ±Ø³Øª',
+        adminDashboardTab: 'Ø§ÛŒÚˆÙ…Ù† ÚˆÛŒØ´ Ø¨ÙˆØ±Úˆ',
+        adminLogout: 'Ø®Ø±ÙˆØ¬ (Logout)',
 
-        searchTitle: 'Çõãø ÇáŞÑí? áÇÆÈÑíÑí ˜í İÀÇÑÓ ãíŸ ÊáÇÔ ˜íÌíÿ',
-        searchSubtitle: 'ÌÇãÚ İÀÇÑÓ¡ ÇÍÇÏíË ãÈÇÑ˜À¡ ÊİÇÓíÑ¡ İŞÀ Íäİí æ ãŞÇÑä¡ ÓíÑÊ ØíÈÀ ÇæÑ ÊÇáíİÇÊ ãíŸ ÊáÇÔ ˜ÑíŸ?',
-        searchPlaceholder: '˜ÊÇÈ ˜Ç äÇã¡ ãÕäİ ˜Ç äÇã¡ İÀÑÓÊ äãÈÑ (UQL-1001) íÇ ÓáÓáÀ äãÈÑ Óÿ ÊáÇÔ ˜ÑíŸ...',
-        filtersHeading: 'ÇáİÈÇÆí ÔÚÈÀ ÇæÑ ãæÖæÚÇÊí ÊÕİíÀ (Filters):',
-        booksCountLabel: 'ãæÌæÏ ˜ÊÈ:',
-        outOfLabel: 'ÇÒ ˜á',
-        allSections: 'ÊãÇã ÔÚÈÿ',
-        allCategories: 'ÊãÇã ãÖÇãíä',
-        alphabeticalSectionLabel: 'ÇáİÈÇÆí ÔÚÈÀ:',
-        categoryLabel: 'ãæÖæÚÇÊí ÊÕäíİ:',
-        sectionPrefix: 'ÔÚÈÀ:',
-        authorPrefix: 'ãÕäİ:',
-        serialPrefix: 'ÓáÓáÀ äãÈÑ:',
-        sourcePagePrefix: 'ãÇÎĞ ÕİÍÀ:',
-        availableCopiesLabel: 'ãæÌæÏ äÓÎÿ:',
-        totalCopiesLabel: '˜á äÓÎÿ:',
-        viewDetails: 'ÊİÕíáÇÊ Ïí˜ªíŸ',
-        noBooksFound: 'ÊáÇÔ ˜ÿ ãØÇÈŞ ˜æÆí ˜ÊÇÈ äÀíŸ ãá Ó˜í?',
-        resetFilters: 'ÊãÇã İáŠÑÒ Ñí ÓíŠ ˜ÑíŸ',
+        searchTitle: 'Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ Ú©ÛŒ ÙÛØ§Ø±Ø³ Ù…ÛŒÚº ØªÙ„Ø§Ø´ Ú©ÛŒØ¬ÛŒÛ’',
+        searchSubtitle: 'Ø¬Ø§Ù…Ø¹ ÙÛØ§Ø±Ø³ØŒ Ø§Ø­Ø§Ø¯ÛŒØ« Ù…Ø¨Ø§Ø±Ú©ÛØŒ ØªÙØ§Ø³ÛŒØ±ØŒ ÙÙ‚Û Ø­Ù†ÙÛŒ Ùˆ Ù…Ù‚Ø§Ø±Ù†ØŒ Ø³ÛŒØ±Øª Ø·ÛŒØ¨Û Ø§ÙˆØ± ØªØ§Ù„ÛŒÙØ§Øª Ù…ÛŒÚº ØªÙ„Ø§Ø´ Ú©Ø±ÛŒÚºÛ”',
+        searchPlaceholder: 'Ú©ØªØ§Ø¨ Ú©Ø§ Ù†Ø§Ù…ØŒ Ù…ØµÙ†Ù Ú©Ø§ Ù†Ø§Ù…ØŒ ÙÛØ±Ø³Øª Ù†Ù…Ø¨Ø± (UQL-1001) ÛŒØ§ Ø³Ù„Ø³Ù„Û Ù†Ù…Ø¨Ø± Ø³Û’ ØªÙ„Ø§Ø´ Ú©Ø±ÛŒÚº...',
+        filtersHeading: 'Ø§Ù„ÙØ¨Ø§Ø¦ÛŒ Ø´Ø¹Ø¨Û Ø§ÙˆØ± Ù…ÙˆØ¶ÙˆØ¹Ø§ØªÛŒ ØªØµÙÛŒÛ (Filters):',
+        booksCountLabel: 'Ù…ÙˆØ¬ÙˆØ¯ Ú©ØªØ¨:',
+        outOfLabel: 'Ø§Ø² Ú©Ù„',
+        allSections: 'ØªÙ…Ø§Ù… Ø´Ø¹Ø¨Û’',
+        allCategories: 'ØªÙ…Ø§Ù… Ù…Ø¶Ø§Ù…ÛŒÙ†',
+        alphabeticalSectionLabel: 'Ø§Ù„ÙØ¨Ø§Ø¦ÛŒ Ø´Ø¹Ø¨Û:',
+        categoryLabel: 'Ù…ÙˆØ¶ÙˆØ¹Ø§ØªÛŒ ØªØµÙ†ÛŒÙ:',
+        sectionPrefix: 'Ø´Ø¹Ø¨Û:',
+        authorPrefix: 'Ù…ØµÙ†Ù:',
+        serialPrefix: 'Ø³Ù„Ø³Ù„Û Ù†Ù…Ø¨Ø±:',
+        sourcePagePrefix: 'Ù…Ø§Ø®Ø° ØµÙØ­Û:',
+        availableCopiesLabel: 'Ù…ÙˆØ¬ÙˆØ¯ Ù†Ø³Ø®Û’:',
+        totalCopiesLabel: 'Ú©Ù„ Ù†Ø³Ø®Û’:',
+        viewDetails: 'ØªÙØµÛŒÙ„Ø§Øª Ø¯ÛŒÚ©Ú¾ÛŒÚº',
+        noBooksFound: 'ØªÙ„Ø§Ø´ Ú©Û’ Ù…Ø·Ø§Ø¨Ù‚ Ú©ÙˆØ¦ÛŒ Ú©ØªØ§Ø¨ Ù†ÛÛŒÚº Ù…Ù„ Ø³Ú©ÛŒÛ”',
+        resetFilters: 'ØªÙ…Ø§Ù… ÙÙ„Ù¹Ø±Ø² Ø±ÛŒ Ø³ÛŒÙ¹ Ú©Ø±ÛŒÚº',
 
-        metricTotalBooks: '˜á ˜ÊÈ İÀÇÑÓ',
-        metricTotalCopies: 'ÏÓÊíÇÈ äÓÎÀ ÌÇÊ',
-        metricCategoriesCount: 'ãæÖæÚÇÊí ÊÕäíİÇÊ',
-        metricSectionsCount: 'ÇáİÈÇÆí ÔÚÈÀ ÌÇÊ',
-        dbStatus: 'íŠÇÈíÓ ÍÇáÊ',
-        dbActive: 'İÚÇá (ãŞÇãÇÊí ĞÎíÑÀ)',
+        metricTotalBooks: 'Ú©Ù„ Ú©ØªØ¨ ÙÛØ§Ø±Ø³',
+        metricTotalCopies: 'Ø¯Ø³ØªÛŒØ§Ø¨ Ù†Ø³Ø®Û Ø¬Ø§Øª',
+        metricCategoriesCount: 'Ù…ÙˆØ¶ÙˆØ¹Ø§ØªÛŒ ØªØµÙ†ÛŒÙØ§Øª',
+        metricSectionsCount: 'Ø§Ù„ÙØ¨Ø§Ø¦ÛŒ Ø´Ø¹Ø¨Û Ø¬Ø§Øª',
+        dbStatus: 'ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ø­Ø§Ù„Øª',
+        dbActive: 'ÙØ¹Ø§Ù„ (Ù…Ù‚Ø§Ù…Ø§ØªÛŒ Ø°Ø®ÛŒØ±Û)',
         
-        adminHeaderTitle: 'Çõãø ÇáŞÑí? áÇÆÈÑíÑí Çíãä ˜äŠÑæá íäá',
-        adminHeaderSubtitle: 'äÆí ˜ÊÈ ÔÇãá ˜ÑíŸ íÇ CSV / Excel (.xlsx) İÇÆáæŸ Óÿ Èá˜ Ç áæä ÇäÌÇã ÏíŸ',
-        bulkImportBtn: '?? ˜ÊÈ ˜í Èá˜ ÏÑÂãÏ (Excel / CSV Import)',
-        addBookBtn: 'äÆí ˜ÊÇÈ ÔÇãá ˜ÑíŸ',
-        resetDbBtnTooltip: 'íŠÇÈíÓ ˜æ ÇÕá 50 ˜ÊÈ Ñ Ñí ÓíŠ ˜ÑíŸ',
-        tableSearchPlaceholder: 'ÌÏæá ˜í ÕİæŸ ãíŸ ÊáÇÔ ˜ÑíŸ...',
-        recordsShown: 'ÙÇÀÑ ˜ÑÏÀ ÕİíŸ:',
-        colCatNo: 'İÀÑÓÊ äãÈÑ',
-        colTitle: 'ÚäæÇä ˜ÊÇÈ',
-        colAuthor: 'ãÕäİ',
-        colSerialNo: 'ÓáÓáÀ äãÈÑ',
-        colSection: 'ÇáİÈÇÆí ÔÚÈÀ',
-        colCategory: 'ãÖãæä',
-        colSourcePage: 'ãÇÎĞ ÕİÍÀ',
-        colCopies: 'äÓÎÿ (ãæÌæÏ/˜á)',
-        colActions: 'ÇŞÏÇãÇÊ',
-        editTooltip: 'ÊÑãíã ˜ÑíŸ',
-        deleteTooltip: 'ÍĞİ ˜ÑíŸ',
-        prevPage: 'ªáÇ',
-        nextPage: 'ÇáÇ',
-        pageLabel: 'ÕİÍÀ',
+        adminHeaderTitle: 'Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ Ø§ÛŒÚˆÙ…Ù† Ú©Ù†Ù¹Ø±ÙˆÙ„ Ù¾ÛŒÙ†Ù„',
+        adminHeaderSubtitle: 'Ù†Ø¦ÛŒ Ú©ØªØ¨ Ø´Ø§Ù…Ù„ Ú©Ø±ÛŒÚº ÛŒØ§ CSV / Excel (.xlsx) ÙØ§Ø¦Ù„ÙˆÚº Ø³Û’ Ø¨Ù„Ú© Ø§Ù¾ Ù„ÙˆÚˆÙ†Ú¯ Ø§Ù†Ø¬Ø§Ù… Ø¯ÛŒÚº',
+        bulkImportBtn: 'ğŸ“š Ú©ØªØ¨ Ú©ÛŒ Ø¨Ù„Ú© Ø¯Ø±Ø¢Ù…Ø¯ (Excel / CSV Import)',
+        addBookBtn: 'Ù†Ø¦ÛŒ Ú©ØªØ§Ø¨ Ø´Ø§Ù…Ù„ Ú©Ø±ÛŒÚº',
+        resetDbBtnTooltip: 'ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ú©Ùˆ Ø§ØµÙ„ 50 Ú©ØªØ¨ Ù¾Ø± Ø±ÛŒ Ø³ÛŒÙ¹ Ú©Ø±ÛŒÚº',
+        tableSearchPlaceholder: 'Ø¬Ø¯ÙˆÙ„ Ú©ÛŒ ØµÙÙˆÚº Ù…ÛŒÚº ØªÙ„Ø§Ø´ Ú©Ø±ÛŒÚº...',
+        recordsShown: 'Ø¸Ø§ÛØ± Ú©Ø±Ø¯Û ØµÙÛŒÚº:',
+        colCatNo: 'ÙÛØ±Ø³Øª Ù†Ù…Ø¨Ø±',
+        colTitle: 'Ø¹Ù†ÙˆØ§Ù† Ú©ØªØ§Ø¨',
+        colAuthor: 'Ù…ØµÙ†Ù',
+        colSerialNo: 'Ø³Ù„Ø³Ù„Û Ù†Ù…Ø¨Ø±',
+        colSection: 'Ø§Ù„ÙØ¨Ø§Ø¦ÛŒ Ø´Ø¹Ø¨Û',
+        colCategory: 'Ù…Ø¶Ù…ÙˆÙ†',
+        colSourcePage: 'Ù…Ø§Ø®Ø° ØµÙØ­Û',
+        colCopies: 'Ù†Ø³Ø®Û’ (Ù…ÙˆØ¬ÙˆØ¯/Ú©Ù„)',
+        colActions: 'Ø§Ù‚Ø¯Ø§Ù…Ø§Øª',
+        editTooltip: 'ØªØ±Ù…ÛŒÙ… Ú©Ø±ÛŒÚº',
+        deleteTooltip: 'Ø­Ø°Ù Ú©Ø±ÛŒÚº',
+        prevPage: 'Ù¾Ú†Ú¾Ù„Ø§',
+        nextPage: 'Ø§Ú¯Ù„Ø§',
+        pageLabel: 'ØµÙØ­Û',
 
-        loginModalTitle: 'Çíãä ÏÎæá (Admin Login)',
-        loginModalSubtitle: 'Çõãø ÇáŞÑí? áÇÆÈÑíÑí ˜ÿ ÇäÊÙÇãí ˜äŠÑæá íäá ãíŸ áÇ Çä ˜ÑíŸ',
-        passwordLabel: 'ÇÓ æÑ ÏÑÌ ˜ÑíŸ:',
-        passwordPlaceholder: 'ÇÓ æÑ ÏÑÌ ˜ÑíŸ (íİÇáŠ: admin123)',
-        loginBtn: 'áÇ Çä ˜ÑíŸ',
-        invalidPasswordMsg: 'ÛáØ ÇÓ æÑ! ÈÑÇÆÿ ãÀÑÈÇäí ÏæÈÇÑÀ ˜æÔÔ ˜ÑíŸ? (íİÇáŠ: admin123)',
+        loginModalTitle: 'Ø§ÛŒÚˆÙ…Ù† Ø¯Ø®ÙˆÙ„ (Admin Login)',
+        loginModalSubtitle: 'Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ Ú©Û’ Ø§Ù†ØªØ¸Ø§Ù…ÛŒ Ú©Ù†Ù¹Ø±ÙˆÙ„ Ù¾ÛŒÙ†Ù„ Ù…ÛŒÚº Ù„Ø§Ú¯ Ø§Ù† Ú©Ø±ÛŒÚº',
+        passwordLabel: 'Ù¾Ø§Ø³ ÙˆØ±Úˆ Ø¯Ø±Ø¬ Ú©Ø±ÛŒÚº:',
+        passwordPlaceholder: 'Ù¾Ø§Ø³ ÙˆØ±Úˆ Ø¯Ø±Ø¬ Ú©Ø±ÛŒÚº (ÚˆÛŒÙØ§Ù„Ù¹: admin123)',
+        loginBtn: 'Ù„Ø§Ú¯ Ø§Ù† Ú©Ø±ÛŒÚº',
+        invalidPasswordMsg: 'ØºÙ„Ø· Ù¾Ø§Ø³ ÙˆØ±Úˆ! Ø¨Ø±Ø§Ø¦Û’ Ù…ÛØ±Ø¨Ø§Ù†ÛŒ Ø¯ÙˆØ¨Ø§Ø±Û Ú©ÙˆØ´Ø´ Ú©Ø±ÛŒÚºÛ” (ÚˆÛŒÙØ§Ù„Ù¹: admin123)',
 
-        bulkModalTitle: '?? ˜ÊÈ ˜í Èá˜ ÏÑÂãÏ (Excel / CSV Import)',
-        bulkModalSubtitle: 'CSV ÇæÑ Excel (.xlsx, .xls) İÇÆáæŸ Óÿ ÇÑÏæ ÇæÑ ÚÑÈí ˜ÊÈ ˜í Ç áæä',
-        dropzoneClick: 'İÇÆá ãäÊÎÈ ˜Ñäÿ ˜ÿ áíÿ íÀÇŸ ˜á˜ ˜ÑíŸ',
-        dropzoneOr: 'íÇ Ñí ÇæÑ ÑÇ ˜ÑíŸ',
-        supportedFormats: 'ãÏÚæãÀ İÇÑãíŠÓ: CSV, Excel (.xlsx, .xls) - ÇÑÏæ ÇæÑ ÚÑÈí ÍÑæİ UTF-8 ãÍİæÙ',
-        downloadSampleBtn: '?? äãæäÀ Excel İÇÆá ÇÄä áæ ˜ÑíŸ (Download Sample)',
-        selectedFileLabel: 'ãäÊÎÈ İÇÆá:',
-        importCompletedTitle: 'Èá˜ ÏÑÇ?ãÏ ˜Ç Úãá ã˜ãá Àæ íÇ!',
-        savedCountLabel: '? ˜ÇãíÇÈí Óÿ íŠÇÈíÓ ãíŸ ãÍİæÙ ˜ÑÏÀ ˜ÊÈ:',
-        skippedCountLabel: '?? ãÓÊÑÏ ÔÏÀ / ÛíÑ ÏÑÓÊ Õİæİ:',
-        filterAllRows: 'ÊãÇã ÕİíŸ',
-        filterValidRows: 'ÏÑÓÊ ÕİíŸ',
-        filterErrorRows: 'Ê˜ÑÇÑ æ ÇÛáÇØ',
-        saveValidBtn: '?? ÏÑÓÊ ˜ÊÈ íŠÇÈíÓ ãíŸ ãÍİæÙ ˜ÑíŸ',
-        colStatus: 'Ñí˜ÇÑ ÍÇáÊ',
-        statusReady: 'ÏÑÓÊ',
-        errMissingTitle: '?? ÚäæÇä ÛÇÆÈ Àÿ',
-        errMissingCat: '?? İÀÑÓÊ äãÈÑ ÛÇÆÈ Àÿ',
-        errDupDb: '?? Àáÿ Óÿ íŠÇÈíÓ ãíŸ ãæÌæÏ Àÿ (DB Duplicate)',
-        errDupFile: '?? İÇÆá ˜ÿ ÇäÏÑ ã˜ÑÑ İÀÑÓÊ äãÈÑ Àÿ (File Duplicate)',
-        noRowsInFilter: 'ÇÓ İáŠÑ ãíŸ ˜æÆí Ñí˜ÇÑ ãæÌæÏ äÀíŸ Àÿ?',
-        bulkHelpFooter: 'ÌÏæá ˜ÿ ÇäÏÑ ÎáíÇÊ (cells) ãíŸ ÊÑãíã ˜Ñ ˜ÿ ã˜ÑÑ İÀÑÓÊ äãÈÑ íÇ ÛáØ ãÚáæãÇÊ ˜í ÇÕáÇÍ ˜Ñ Ó˜Êÿ ÀíŸ?',
-        closeBtn: 'ÈäÏ ˜ÑíŸ',
+        bulkModalTitle: 'ğŸ“š Ú©ØªØ¨ Ú©ÛŒ Ø¨Ù„Ú© Ø¯Ø±Ø¢Ù…Ø¯ (Excel / CSV Import)',
+        bulkModalSubtitle: 'CSV Ø§ÙˆØ± Excel (.xlsx, .xls) ÙØ§Ø¦Ù„ÙˆÚº Ø³Û’ Ø§Ø±Ø¯Ùˆ Ø§ÙˆØ± Ø¹Ø±Ø¨ÛŒ Ú©ØªØ¨ Ú©ÛŒ Ø§Ù¾ Ù„ÙˆÚˆÙ†Ú¯',
+        dropzoneClick: 'ÙØ§Ø¦Ù„ Ù…Ù†ØªØ®Ø¨ Ú©Ø±Ù†Û’ Ú©Û’ Ù„ÛŒÛ’ ÛŒÛØ§Úº Ú©Ù„Ú© Ú©Ø±ÛŒÚº',
+        dropzoneOr: 'ÛŒØ§ ÚˆØ±ÛŒÚ¯ Ø§ÙˆØ± ÚˆØ±Ø§Ù¾ Ú©Ø±ÛŒÚº',
+        supportedFormats: 'Ù…Ø¯Ø¹ÙˆÙ…Û ÙØ§Ø±Ù…ÛŒÙ¹Ø³: CSV, Excel (.xlsx, .xls) - Ø§Ø±Ø¯Ùˆ Ø§ÙˆØ± Ø¹Ø±Ø¨ÛŒ Ø­Ø±ÙˆÙ UTF-8 Ù…Ø­ÙÙˆØ¸',
+        downloadSampleBtn: 'ğŸ“¥ Ù†Ù…ÙˆÙ†Û Excel ÙØ§Ø¦Ù„ ÚˆØ§Ø¤Ù† Ù„ÙˆÚˆ Ú©Ø±ÛŒÚº (Download Sample)',
+        selectedFileLabel: 'Ù…Ù†ØªØ®Ø¨ ÙØ§Ø¦Ù„:',
+        importCompletedTitle: 'Ø¨Ù„Ú© Ø¯Ø±Ø§Ù“Ù…Ø¯ Ú©Ø§ Ø¹Ù…Ù„ Ù…Ú©Ù…Ù„ ÛÙˆ Ú¯ÛŒØ§!',
+        savedCountLabel: 'âœ… Ú©Ø§Ù…ÛŒØ§Ø¨ÛŒ Ø³Û’ ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ù…ÛŒÚº Ù…Ø­ÙÙˆØ¸ Ú©Ø±Ø¯Û Ú©ØªØ¨:',
+        skippedCountLabel: 'âš ï¸ Ù…Ø³ØªØ±Ø¯ Ø´Ø¯Û / ØºÛŒØ± Ø¯Ø±Ø³Øª ØµÙÙˆÙ:',
+        filterAllRows: 'ØªÙ…Ø§Ù… ØµÙÛŒÚº',
+        filterValidRows: 'Ø¯Ø±Ø³Øª ØµÙÛŒÚº',
+        filterErrorRows: 'ØªÚ©Ø±Ø§Ø± Ùˆ Ø§ØºÙ„Ø§Ø·',
+        saveValidBtn: 'ğŸ’¾ Ø¯Ø±Ø³Øª Ú©ØªØ¨ ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ù…ÛŒÚº Ù…Ø­ÙÙˆØ¸ Ú©Ø±ÛŒÚº',
+        colStatus: 'Ø±ÛŒÚ©Ø§Ø±Úˆ Ø­Ø§Ù„Øª',
+        statusReady: 'Ø¯Ø±Ø³Øª',
+        errMissingTitle: 'âš ï¸ Ø¹Ù†ÙˆØ§Ù† ØºØ§Ø¦Ø¨ ÛÛ’',
+        errMissingCat: 'âš ï¸ ÙÛØ±Ø³Øª Ù†Ù…Ø¨Ø± ØºØ§Ø¦Ø¨ ÛÛ’',
+        errDupDb: 'ğŸ›‘ Ù¾ÛÙ„Û’ Ø³Û’ ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ù…ÛŒÚº Ù…ÙˆØ¬ÙˆØ¯ ÛÛ’ (DB Duplicate)',
+        errDupFile: 'âš ï¸ ÙØ§Ø¦Ù„ Ú©Û’ Ø§Ù†Ø¯Ø± Ù…Ú©Ø±Ø± ÙÛØ±Ø³Øª Ù†Ù…Ø¨Ø± ÛÛ’ (File Duplicate)',
+        noRowsInFilter: 'Ø§Ø³ ÙÙ„Ù¹Ø± Ù…ÛŒÚº Ú©ÙˆØ¦ÛŒ Ø±ÛŒÚ©Ø§Ø±Úˆ Ù…ÙˆØ¬ÙˆØ¯ Ù†ÛÛŒÚº ÛÛ’Û”',
+        bulkHelpFooter: 'Ø¬Ø¯ÙˆÙ„ Ú©Û’ Ø§Ù†Ø¯Ø± Ø®Ù„ÛŒØ§Øª (cells) Ù…ÛŒÚº ØªØ±Ù…ÛŒÙ… Ú©Ø± Ú©Û’ Ù…Ú©Ø±Ø± ÙÛØ±Ø³Øª Ù†Ù…Ø¨Ø± ÛŒØ§ ØºÙ„Ø· Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ú©ÛŒ Ø§ØµÙ„Ø§Ø­ Ú©Ø± Ø³Ú©ØªÛ’ ÛÛŒÚºÛ”',
+        closeBtn: 'Ø¨Ù†Ø¯ Ú©Ø±ÛŒÚº',
         
-        addTitle: 'äÆí ˜ÊÇÈ ˜Ç ÇäÏÑÇÌ',
-        editTitle: '˜ÊÇÈ ˜ÿ ãÚáæãÇÊ ˜í ÊÑãíã',
-        fieldTitle: 'ÚäæÇä ˜ÊÇÈ / ÊÇáíİ:',
-        fieldAuthor: 'ãÕäİ ˜Ç äÇã:',
-        fieldCatNo: 'İÀÑÓÊ äãÈÑ (Catalogue #):',
-        fieldSerialNo: 'ÓáÓáÀ äãÈÑ (Serial #):',
-        fieldSection: 'ÇáİÈÇÆí ÔÚÈÀ:',
-        fieldSourcePage: 'ãÇÎĞ ÕİÍÀ:',
-        fieldCategory: 'ãæÖæÚí ÊÕäíİ:',
-        fieldTotalCopies: '˜á äÓÎÿ:',
-        fieldAvailableCopies: 'ÏÓÊíÇÈ äÓÎÿ:',
-        cancelBtn: 'ãäÓæÎ ˜ÑíŸ',
-        saveBtn: 'ãÍİæÙ ˜ÑíŸ',
+        addTitle: 'Ù†Ø¦ÛŒ Ú©ØªØ§Ø¨ Ú©Ø§ Ø§Ù†Ø¯Ø±Ø§Ø¬',
+        editTitle: 'Ú©ØªØ§Ø¨ Ú©Û’ Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ú©ÛŒ ØªØ±Ù…ÛŒÙ…',
+        fieldTitle: 'Ø¹Ù†ÙˆØ§Ù† Ú©ØªØ§Ø¨ / ØªØ§Ù„ÛŒÙ:',
+        fieldAuthor: 'Ù…ØµÙ†Ù Ú©Ø§ Ù†Ø§Ù…:',
+        fieldCatNo: 'ÙÛØ±Ø³Øª Ù†Ù…Ø¨Ø± (Catalogue #):',
+        fieldSerialNo: 'Ø³Ù„Ø³Ù„Û Ù†Ù…Ø¨Ø± (Serial #):',
+        fieldSection: 'Ø§Ù„ÙØ¨Ø§Ø¦ÛŒ Ø´Ø¹Ø¨Û:',
+        fieldSourcePage: 'Ù…Ø§Ø®Ø° ØµÙØ­Û:',
+        fieldCategory: 'Ù…ÙˆØ¶ÙˆØ¹ÛŒ ØªØµÙ†ÛŒÙ:',
+        fieldTotalCopies: 'Ú©Ù„ Ù†Ø³Ø®Û’:',
+        fieldAvailableCopies: 'Ø¯Ø³ØªÛŒØ§Ø¨ Ù†Ø³Ø®Û’:',
+        cancelBtn: 'Ù…Ù†Ø³ÙˆØ® Ú©Ø±ÛŒÚº',
+        saveBtn: 'Ù…Ø­ÙÙˆØ¸ Ú©Ø±ÛŒÚº',
 
-        confirmDeleteTitle: '˜ÊÇÈ ˜æ ÍĞİ ˜Ñäÿ ˜í ÊÕÏíŞ',
-        confirmDeleteMessage: '˜íÇ Â æÇŞÚí ÇÓ ˜ÊÇÈ ˜æ áÇÆÈÑíÑí ˜ÿ íŠÇÈíÓ Óÿ ãÓÊŞá ØæÑ Ñ ÍĞİ ˜ÑäÇ ÇÀÊÿ ÀíŸ¿',
-        confirmDeleteBtn: 'Ìí ÀÇŸ¡ ÍĞİ ˜ÑíŸ',
+        confirmDeleteTitle: 'Ú©ØªØ§Ø¨ Ú©Ùˆ Ø­Ø°Ù Ú©Ø±Ù†Û’ Ú©ÛŒ ØªØµØ¯ÛŒÙ‚',
+        confirmDeleteMessage: 'Ú©ÛŒØ§ Ø¢Ù¾ ÙˆØ§Ù‚Ø¹ÛŒ Ø§Ø³ Ú©ØªØ§Ø¨ Ú©Ùˆ Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ Ú©Û’ ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ø³Û’ Ù…Ø³ØªÙ‚Ù„ Ø·ÙˆØ± Ù¾Ø± Ø­Ø°Ù Ú©Ø±Ù†Ø§ Ú†Ø§ÛØªÛ’ ÛÛŒÚºØŸ',
+        confirmDeleteBtn: 'Ø¬ÛŒ ÛØ§ÚºØŒ Ø­Ø°Ù Ú©Ø±ÛŒÚº',
 
-        bookDetailsTitle: 'ÊİÕíáÇÊö ˜ÊÇÈ',
-        subjectLabel: 'ãæÖæÚ:',
+        bookDetailsTitle: 'ØªÙØµÛŒÙ„Ø§ØªÙ Ú©ØªØ§Ø¨',
+        subjectLabel: 'Ù…ÙˆØ¶ÙˆØ¹:',
 
-        toastUpdateSuccess: '˜ÊÇÈ ˜í ÊİÕíáÇÊ ˜ÇãíÇÈí Óÿ Ç íŠ Àæ ÆíŸ!',
-        toastAddSuccess: 'äÆí ˜ÊÇÈ ˜ÇãíÇÈí Óÿ áÇÆÈÑíÑí İÀÇÑÓ ãíŸ ÔÇãá ˜Ñ Ïí Æí!',
-        toastDeleteSuccess: '˜ÊÇÈ ˜æ íŠÇÈíÓ Óÿ ÍĞİ ˜Ñ ÏíÇ íÇ Àÿ',
-        toastResetSuccess: 'íŠÇÈíÓ ÇÕá 50 ˜ÊÈ Ñ Ñí ÓíŠ ˜Ñ ÏíÇ íÇ Àÿ',
-        toastImportSuccess: '˜ÇãíÇÈí! Èá˜ ÏÑÇ?ãÏ ÔÏÀ ˜ÊÈ íŠÇÈíÓ ãíŸ ãÍİæÙ Àæ ÆíŸ!',
+        toastUpdateSuccess: 'Ú©ØªØ§Ø¨ Ú©ÛŒ ØªÙØµÛŒÙ„Ø§Øª Ú©Ø§Ù…ÛŒØ§Ø¨ÛŒ Ø³Û’ Ø§Ù¾ ÚˆÛŒÙ¹ ÛÙˆ Ú¯Ø¦ÛŒÚº!',
+        toastAddSuccess: 'Ù†Ø¦ÛŒ Ú©ØªØ§Ø¨ Ú©Ø§Ù…ÛŒØ§Ø¨ÛŒ Ø³Û’ Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ ÙÛØ§Ø±Ø³ Ù…ÛŒÚº Ø´Ø§Ù…Ù„ Ú©Ø± Ø¯ÛŒ Ú¯Ø¦ÛŒ!',
+        toastDeleteSuccess: 'Ú©ØªØ§Ø¨ Ú©Ùˆ ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ø³Û’ Ø­Ø°Ù Ú©Ø± Ø¯ÛŒØ§ Ú¯ÛŒØ§ ÛÛ’',
+        toastResetSuccess: 'ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ø§ØµÙ„ 50 Ú©ØªØ¨ Ù¾Ø± Ø±ÛŒ Ø³ÛŒÙ¹ Ú©Ø± Ø¯ÛŒØ§ Ú¯ÛŒØ§ ÛÛ’',
+        toastImportSuccess: 'Ú©Ø§Ù…ÛŒØ§Ø¨ÛŒ! Ø¨Ù„Ú© Ø¯Ø±Ø§Ù“Ù…Ø¯ Ø´Ø¯Û Ú©ØªØ¨ ÚˆÛŒÙ¹Ø§Ø¨ÛŒØ³ Ù…ÛŒÚº Ù…Ø­ÙÙˆØ¸ ÛÙˆ Ú¯Ø¦ÛŒÚº!',
 
-        footerCopyright: '© Çõãø ÇáŞÑí? áÇÆÈÑíÑí (ãßÊÈÉ Ãã ÇáŞÑì) - ÇÑÏæ ÇæÑ ÚÑÈí İÀÇÑÓ æ ÊÇáíİÇÊ ˜Ç Âä áÇÆä äÙÇã',
-        footerFeature: 'Excel / CSV Èá˜ ÏÑÇ?ãÏ ÇæÑ Ïæ áÓÇäí ÓÀæáÊ İÚÇá Àÿ'
+        footerCopyright: 'Â© Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ (Ù…ÙƒØªØ¨Ø© Ø£Ù… Ø§Ù„Ù‚Ø±Ù‰) - Ø§Ø±Ø¯Ùˆ Ø§ÙˆØ± Ø¹Ø±Ø¨ÛŒ ÙÛØ§Ø±Ø³ Ùˆ ØªØ§Ù„ÛŒÙØ§Øª Ú©Ø§ Ø¢Ù† Ù„Ø§Ø¦Ù† Ù†Ø¸Ø§Ù…',
+        footerFeature: 'Excel / CSV Ø¨Ù„Ú© Ø¯Ø±Ø§Ù“Ù…Ø¯ Ø§ÙˆØ± Ø¯Ùˆ Ù„Ø³Ø§Ù†ÛŒ Ø³ÛÙˆÙ„Øª ÙØ¹Ø§Ù„ ÛÛ’'
       },
       en: {
         appTitle: 'Ummul Qura Library',
-        appSubtitle: 'ãßÊÈÉ Ãã ÇáŞÑì - Digital Islamic Library & Cataloguing System',
+        appSubtitle: 'Ù…ÙƒØªØ¨Ø© Ø£Ù… Ø§Ù„Ù‚Ø±Ù‰ - Digital Islamic Library & Cataloguing System',
         publicCatalogTab: 'Public Catalogue',
         adminDashboardTab: 'Admin Dashboard',
         adminLogout: 'Logout',
@@ -310,7 +312,7 @@
         
         adminHeaderTitle: 'Ummul Qura Library Administration',
         adminHeaderSubtitle: 'Manage book records or perform bulk imports using CSV / Excel (.xlsx) files',
-        bulkImportBtn: '?? Bulk CSV/Excel Import',
+        bulkImportBtn: 'ğŸ“š Bulk CSV/Excel Import',
         addBookBtn: 'Add New Book',
         resetDbBtnTooltip: 'Reset database to original 50 books',
         tableSearchPlaceholder: 'Filter table records...',
@@ -337,26 +339,26 @@
         loginBtn: 'Login',
         invalidPasswordMsg: 'Invalid Password! Please try again. (default: admin123)',
 
-        bulkModalTitle: '?? Bulk Book Import (CSV / Excel)',
+        bulkModalTitle: 'ğŸ“š Bulk Book Import (CSV / Excel)',
         bulkModalSubtitle: 'Import book records in bulk via CSV or Excel (.xlsx, .xls) files with full UTF-8 encoding support.',
         dropzoneClick: 'Click here to select a spreadsheet file',
         dropzoneOr: 'or drag and drop your file into this box',
         supportedFormats: 'Supported formats: CSV, Excel (.xlsx, .xls) - Arabic & Urdu text preserved',
-        downloadSampleBtn: '?? Download Sample Excel File',
+        downloadSampleBtn: 'ğŸ“¥ Download Sample Excel File',
         selectedFileLabel: 'Selected File:',
         importCompletedTitle: 'Bulk Import Process Completed!',
-        savedCountLabel: '? Successfully saved to database:',
-        skippedCountLabel: '?? Skipped / invalid records:',
+        savedCountLabel: 'âœ… Successfully saved to database:',
+        skippedCountLabel: 'âš ï¸ Skipped / invalid records:',
         filterAllRows: 'All Records',
         filterValidRows: 'Ready Records',
         filterErrorRows: 'Duplicates & Errors',
-        saveValidBtn: '?? Save Valid Records to Database',
+        saveValidBtn: 'ğŸ’¾ Save Valid Records to Database',
         colStatus: 'Record Status',
         statusReady: 'Ready',
-        errMissingTitle: '?? Missing title',
-        errMissingCat: '?? Missing catalogue number',
-        errDupDb: '?? Duplicate catalogue number in DB',
-        errDupFile: '?? Duplicate catalogue number in file',
+        errMissingTitle: 'âš ï¸ Missing title',
+        errMissingCat: 'âš ï¸ Missing catalogue number',
+        errDupDb: 'ğŸ›‘ Duplicate catalogue number in DB',
+        errDupFile: 'âš ï¸ Duplicate catalogue number in file',
         noRowsInFilter: 'No records found matching this filter.',
         bulkHelpFooter: 'You can directly edit table cells to correct duplicate numbers or missing titles before importing.',
         closeBtn: 'Close',
@@ -388,7 +390,7 @@
         toastResetSuccess: 'Database reset to original 50 books.',
         toastImportSuccess: 'Success! Imported books saved to database!',
 
-        footerCopyright: '© Ummul Qura Library (ãßÊÈÉ Ãã ÇáŞÑì) - Classical Arabic & Urdu Digital Cataloguing System',
+        footerCopyright: 'Â© Ummul Qura Library (Ù…ÙƒØªØ¨Ø© Ø£Ù… Ø§Ù„Ù‚Ø±Ù‰) - Classical Arabic & Urdu Digital Cataloguing System',
         footerFeature: 'Bulk CSV/Excel import & Dual Urdu/English UI active'
       }
     };
@@ -509,12 +511,12 @@
         const newEntries = cleanRecords.map((item, idx) => ({
           id: 'imp_' + Date.now() + '_' + idx,
           catalogue_number: item.catalogue_number || `UQL-IMP-${1000 + idx}`,
-          title: item.title || 'ÛíÑ ÚäæÇä ÔÏÀ',
-          author: item.author || 'ÛíÑ ãÚÑæİ ãÕäİ',
+          title: item.title || 'ØºÙŠØ± Ø¹Ù†ÙˆØ§Ù† Ø´Ø¯Û',
+          author: item.author || 'ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ Ù…ØµÙ†Ù',
           serial_number: item.serial_number || `SN-IMP-${100 + idx}`,
-          alphabetical_section: item.alphabetical_section || 'Ã',
-          category: item.category || 'ÚÇã ÊÇáíİ',
-          source_page: item.source_page || 'Õ 1',
+          alphabetical_section: item.alphabetical_section || 'Ø£',
+          category: item.category || 'Ø¹Ø§Ù… ØªØ§Ù„ÛŒÙ',
+          source_page: item.source_page || 'Øµ Ù¡',
           total_copies: parseInt(item.total_copies) || 5,
           available_copies: parseInt(item.available_copies) || 5
         }));
@@ -591,10 +593,10 @@
                 <button
                   onClick={toggleLanguage}
                   className="bg-gold-500 hover:bg-gold-400 text-library-950 font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center gap-2 border border-gold-300"
-                  title="Toggle Language / ÒÈÇä ãäÊÎÈ ˜ÑíŸ"
+                  title="Toggle Language / Ø²Ø¨Ø§Ù† Ù…Ù†ØªØ®Ø¨ Ú©Ø±ÛŒÚº"
                 >
                   <i className="fa-solid fa-globe"></i>
-                  <span>{lang === 'ur' ? '?? English' : '?? ÇÑÏæ'}</span>
+                  <span>{lang === 'ur' ? 'ğŸŒ English' : 'ğŸŒ Ø§Ø±Ø¯Ùˆ'}</span>
                 </button>
               </div>
 
@@ -956,7 +958,7 @@
                   {/* Card Footer */}
                   <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                     <span className="text-xs bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full font-bold">
-                      {book.category || 'ÚÇã'}
+                      {book.category || 'Ø¹Ø§Ù…'}
                     </span>
                     <button
                       onClick={() => onSelectDetail(book)}
@@ -1145,7 +1147,7 @@
                             {b.alphabetical_section}
                           </span>
                         </td>
-                        <td className="p-3.5 text-slate-600">{b.category || 'ÚÇã'}</td>
+                        <td className="p-3.5 text-slate-600">{b.category || 'Ø¹Ø§Ù…'}</td>
                         <td className="p-3.5 text-slate-600 font-mono">{b.source_page}</td>
                         <td className="p-3.5 text-center space-x-1.5 rtl:space-x-reverse">
                           <button
@@ -1275,7 +1277,7 @@
             const rawRows = window.XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
             if (!rawRows || rawRows.length === 0) {
-              alert(lang === 'ur' ? 'ãäÊÎÈ İÇÆá ãíŸ ãÚáæãÇÊ äÀíŸ ÀíŸ?' : 'The selected file is empty.');
+              alert(lang === 'ur' ? 'Ù…Ù†ØªØ®Ø¨ ÙØ§Ø¦Ù„ Ù…ÛŒÚº Ù…Ø¹Ù„ÙˆÙ…Ø§Øª Ù†ÛÛŒÚº ÛÛŒÚºÛ”' : 'The selected file is empty.');
               return;
             }
 
@@ -1290,7 +1292,7 @@
             setImportSummary(null);
           } catch (err) {
             console.error('File parsing error:', err);
-            alert(lang === 'ur' ? 'İÇÆá šªäÿ ãíŸ ÎØÇ íÔ ÂÆí Àÿ?' : 'Error parsing file.');
+            alert(lang === 'ur' ? 'ÙØ§Ø¦Ù„ Ù¾Ú‘Ú¾Ù†Û’ Ù…ÛŒÚº Ø®Ø·Ø§ Ù¾ÛŒØ´ Ø¢Ø¦ÛŒ ÛÛ’Û”' : 'Error parsing file.');
           }
         };
 
@@ -1316,7 +1318,7 @@
         const failedCount = parsedRows.length - validRecords.length;
 
         if (validRecords.length === 0) {
-          alert(lang === 'ur' ? 'ÏÑÂãÏ ˜ÿ áíÿ ˜æÆí ÏÑÓÊ ˜ÊÇÈ ãæÌæÏ äÀíŸ Àÿ?' : 'No valid records to import.');
+          alert(lang === 'ur' ? 'Ø¯Ø±Ø¢Ù…Ø¯ Ú©Û’ Ù„ÛŒÛ’ Ú©ÙˆØ¦ÛŒ Ø¯Ø±Ø³Øª Ú©ØªØ§Ø¨ Ù…ÙˆØ¬ÙˆØ¯ Ù†ÛÛŒÚº ÛÛ’Û”' : 'No valid records to import.');
           return;
         }
 
@@ -1334,35 +1336,35 @@
       const handleDownloadSample = () => {
         const sampleData = [
           {
-            "Title": "Óää ÇáÏÇÑãí",
-            "Author": "ÇáÅãÇã ÚÈÏ Çááå Èä ÚÈÏ ÇáÑÍãä ÇáÏÇÑãí",
+            "Title": "Ø³Ù†Ù† Ø§Ù„Ø¯Ø§Ø±Ù…ÙŠ",
+            "Author": "Ø§Ù„Ø¥Ù…Ø§Ù… Ø¹Ø¨Ø¯ Ø§Ù„Ù„Ù‡ Ø¨Ù† Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø­Ù…Ù† Ø§Ù„Ø¯Ø§Ø±Ù…ÙŠ",
             "Serial Number": "SN-2024-051",
             "Catalogue Number": "UQL-1051",
-            "Alphabetical Section": "Ó",
-            "Source Page": "Õ 50",
-            "Category": "ÍÏíË ÔÑíİ",
+            "Alphabetical Section": "Ø³",
+            "Source Page": "Øµ Ù¥Ù ",
+            "Category": "Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ",
             "Total Copies": 5,
             "Available Copies": 4
           },
           {
-            "Title": "ãÔßÇÉ ÇáãÕÇÈíÍ",
-            "Author": "ÇáÎØíÈ ÇáÊÈÑíÒí",
+            "Title": "Ù…Ø´ÙƒØ§Ø© Ø§Ù„Ù…ØµØ§Ø¨ÙŠØ­",
+            "Author": "Ø§Ù„Ø®Ø·ÙŠØ¨ Ø§Ù„ØªØ¨Ø±ÙŠØ²ÙŠ",
             "Serial Number": "SN-2024-052",
             "Catalogue Number": "UQL-1052",
-            "Alphabetical Section": "ã",
-            "Source Page": "Õ 120",
-            "Category": "ÍÏíË ÔÑíİ",
+            "Alphabetical Section": "Ù…",
+            "Source Page": "Øµ Ù¡Ù¢Ù ",
+            "Category": "Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ",
             "Total Copies": 6,
             "Available Copies": 5
           },
           {
-            "Title": "ÚŞíÏÀ ØÍÇæíÀ (ÇÑÏæ ÔÑÍ)",
-            "Author": "ãæáÇäÇ ÚÈÏÇáÑÍãä ÕÇÍÈ",
+            "Title": "Ø¹Ù‚ÛŒØ¯Û Ø·Ø­Ø§ÙˆÛŒÛ (Ø§Ø±Ø¯Ùˆ Ø´Ø±Ø­)",
+            "Author": "Ù…ÙˆÙ„Ø§Ù†Ø§ Ø¹Ø¨Ø¯Ø§Ù„Ø±Ø­Ù…Ù† ØµØ§Ø­Ø¨",
             "Serial Number": "SN-2024-053",
             "Catalogue Number": "UQL-1053",
-            "Alphabetical Section": "Ú",
-            "Source Page": "Õ 85",
-            "Category": "Úáã ÇáÚŞíÏÀ",
+            "Alphabetical Section": "Ø¹",
+            "Source Page": "Øµ Ù¨Ù¥",
+            "Category": "Ø¹Ù„Ù… Ø§Ù„Ø¹Ù‚ÛŒØ¯Û",
             "Total Copies": 4,
             "Available Copies": 3
           }
@@ -1371,7 +1373,7 @@
         const ws = window.XLSX.utils.json_to_sheet(sampleData);
         const wb = window.XLSX.utils.book_new();
         window.XLSX.utils.book_append_sheet(wb, ws, "SampleBooks");
-        window.XLSX.writeFile(wb, "Çõãø ÇáŞÑí? áÇÆÈÑíÑí - ˜ÊÇÈæŸ ˜í İÀÑÓÊ.xlsx");
+        window.XLSX.writeFile(wb, "Ø§ÙÙ…Ù‘ Ø§Ù„Ù‚Ø±ÛŒÙ° Ù„Ø§Ø¦Ø¨Ø±ÛŒØ±ÛŒ - Ú©ØªØ§Ø¨ÙˆÚº Ú©ÛŒ ÙÛØ±Ø³Øª.xlsx");
       };
 
       const visibleRows = useMemo(() => {
@@ -1678,9 +1680,9 @@
         author: book ? book.author : '',
         serial_number: book ? book.serial_number : 'SN-2024-' + Math.floor(100 + Math.random() * 900),
         catalogue_number: book ? book.catalogue_number : 'UQL-' + Math.floor(1051 + Math.random() * 500),
-        alphabetical_section: book ? book.alphabetical_section : 'Ã',
-        source_page: book ? book.source_page : 'Õ 1',
-        category: book ? book.category : 'ÍÏíË ÔÑíİ',
+        alphabetical_section: book ? book.alphabetical_section : 'Ø£',
+        source_page: book ? book.source_page : 'Øµ Ù¡',
+        category: book ? book.category : 'Ø­Ø¯ÛŒØ« Ø´Ø±ÛŒÙ',
         total_copies: book ? book.total_copies : 5,
         available_copies: book ? book.available_copies : 5
       });
@@ -1860,7 +1862,7 @@
                 </div>
                 <div>
                   <span className="text-slate-400 block font-sans">{t('subjectLabel')}</span>
-                  <span className="font-bold text-slate-800 font-sans">{book.category || 'ÚÇã'}</span>
+                  <span className="font-bold text-slate-800 font-sans">{book.category || 'Ø¹Ø§Ù…'}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block font-sans">{t('availableCopiesLabel')}</span>
